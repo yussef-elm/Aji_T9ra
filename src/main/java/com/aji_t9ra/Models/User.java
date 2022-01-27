@@ -11,7 +11,20 @@ public class User {
 	private boolean isAdmin;
 	private boolean isApproved;
 	private String role= null;
+	private boolean isActive;
 	
+	public boolean isActive() {
+		return isActive;
+	}
+
+
+
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
+	}
+
+
+
 	public User() {
 		super();
 		// TODO Auto-generated constructor stub

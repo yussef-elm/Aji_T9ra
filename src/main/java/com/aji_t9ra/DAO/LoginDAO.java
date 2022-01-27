@@ -31,6 +31,8 @@ public class LoginDAO extends AbstractDAO {
             	user.setEmail(rs.getString("email"));
             	user.setPassword(rs.getString("password"));
             	user.setAdmin(rs.getBoolean("isAdmin"));
+            	user.setActive(rs.getBoolean("isActive"));
+
             	if(!user.isAdmin() ) {
                     if( isEtudiant(user)) {
             		user.setRole("etudiant");

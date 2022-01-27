@@ -3,11 +3,17 @@
 <%@page import="java.util.*"%>
 <%@page import="com.aji_t9ra.Models.User"%>
 <%@page import="com.aji_t9ra.Models.Enseignant"%>
+<%@ taglib prefix='c' uri='http://java.sun.com/jsp/jstl/core'%>
+
 
 <%
 User user = (User) session.getAttribute("user");
 if (user == null) {
 	response.sendRedirect("login.jsp");
+	return;
+}
+if (user.isAdmin() == false) {
+	response.sendRedirect("index.jsp");
 	return;
 }
 %>
@@ -110,8 +116,12 @@ List<Enseignant> listNewEnseignants = (List<Enseignant>) request.getAttribute("l
 								<nav>
 									<ul id="navigation">
 										<li><a href="index.jsp">Accueil</a></li>
-										<li><a href="about.jsp">À propos</a></li>
-										<li><a href="Enseignant?op=newEnseignants">Nouveaux Enseignants</a></li>
+										<c:if test="${user.isAdmin() == true}">
+											<li><a href="Enseignant?op=newEnseignants">Nouveaux
+													Enseignants</a></li>
+											<li><a href="Etudiant?op=newEtudiants">Nouveaux
+													Etudiants</a></li>
+										</c:if>
 									</ul>
 								</nav>
 							</div>
@@ -131,7 +141,7 @@ List<Enseignant> listNewEnseignants = (List<Enseignant>) request.getAttribute("l
 
 	<main>
 
-	<!-- Hero End -->
+		<!-- Hero End -->
 		<div class="team-area ">
 			<div class="container">
 				<div class="row">
@@ -142,14 +152,16 @@ List<Enseignant> listNewEnseignants = (List<Enseignant>) request.getAttribute("l
 					<div class="col-lg-3 col-md-6 col-sm-6">
 						<div class="single-team mb-30">
 							<div class="team-img">
-								<img src="assets/img/elements/prof.jpg" alt="">
+								<img src="assets/img/elements/prof.jpg" alt=""
+									style="width: 140px; height: 140px; display: block; margin-left: auto; margin-right: auto;">
 							</div>
 							<div class="team-caption">
 								<h3>
-									<a href="profile.jsp"><%=e.getNom() %> <%=" "%><%=e.getPrenom() %></a>
+									<a href="profile.jsp"><%=e.getNom()%> <%=" "%><%=e.getPrenom()%></a>
 								</h3>
 								<p><%=e.getOrganisme()%></p>
-                                <a href="Enseignant?op=profile&id=<%=e.getId() %>" type="button" class="btn btn-info">Profile</a>
+								<a href="Enseignant?op=profile&id=<%=e.getId()%>" type="button"
+									class="btn btn-info">Profile</a>
 							</div>
 						</div>
 					</div>

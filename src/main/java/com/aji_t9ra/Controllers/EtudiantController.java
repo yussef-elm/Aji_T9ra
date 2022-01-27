@@ -2,7 +2,9 @@ package com.aji_t9ra.Controllers;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -12,6 +14,7 @@ import javax.servlet.http.HttpSession;
 
 import com.aji_t9ra.DAO.EtudiantDAO;
 import com.aji_t9ra.DAO.UserDAO;
+import com.aji_t9ra.Models.Enseignant;
 import com.aji_t9ra.Models.Etudiant;
 import com.aji_t9ra.Models.User;
 
@@ -21,23 +24,27 @@ import com.aji_t9ra.Models.User;
 @WebServlet("/Etudiant")
 public class EtudiantController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-	private UserDAO userDao = new UserDAO();
-	private EtudiantDAO etudiantDao=new EtudiantDAO();
-    public EtudiantController() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
 
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#HttpServlet()
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	private UserDAO userDao = new UserDAO();
+	private EtudiantDAO etudiantDao = new EtudiantDAO();
+
+	public EtudiantController() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
 		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+		doPost(request, response);
 	}
 
 	/**
@@ -70,6 +77,91 @@ public class EtudiantController extends HttpServlet {
 				e.printStackTrace();
 			}
 			
+		 }
+		 if(op.equals("newEtudiants"))
+		 {
+
+			 try {
+				List<Etudiant> listNewEtudiants = etudiantDao.getNewEtudiants();
+				request.setAttribute("listNewEtudiants", listNewEtudiants);
+				RequestDispatcher dispatcher = request.getRequestDispatcher("newEtudiants.jsp");
+				dispatcher.forward(request, response);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		 }
+		 if(op.equals("profile"))
+		 {
+
+			 try {
+				int id =Integer.parseInt(request.getParameter("id"));
+				Etudiant etd = etudiantDao.getEtudiantByID(id);
+				request.setAttribute("profile", "etudiant");
+				request.setAttribute("etudiant", etd);
+				RequestDispatcher dispatcher = request.getRequestDispatcher("profile.jsp");
+				dispatcher.forward(request, response);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		 }
+		 if(op.equals("approver"))
+		 {
+
+			 try {
+				int id =Integer.parseInt(request.getParameter("id"));
+				etudiantDao.ApproverEtudiant(id);
+				Etudiant etd = etudiantDao.getEtudiantByID(id);
+				request.setAttribute("etudiant", etd);
+				RequestDispatcher dispatcher = request.getRequestDispatcher("profile.jsp");
+				dispatcher.forward(request, response);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		 }
+		 if(op.equals("desactiver"))
+		 {
+
+			 try {
+				int id =Integer.parseInt(request.getParameter("id"));
+				etudiantDao.desactiverEtudiant(id);
+				Etudiant etd = etudiantDao.getEtudiantByID(id);
+				request.setAttribute("etudiant", etd);
+				RequestDispatcher dispatcher = request.getRequestDispatcher("profile.jsp");
+				dispatcher.forward(request, response);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		 }
+		 if(op.equals("activer"))
+		 {
+
+			 try {
+				int id =Integer.parseInt(request.getParameter("id"));
+				etudiantDao.activerEtudiant(id);
+				Etudiant etd = etudiantDao.getEtudiantByID(id);
+				request.setAttribute("etudiant", etd);
+				RequestDispatcher dispatcher = request.getRequestDispatcher("profile.jsp");
+				dispatcher.forward(request, response);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		 }
+		 if(op.equals("supprimer"))
+		 {
+
+			 try {
+				 int id =Integer.parseInt(request.getParameter("id"));
+				etudiantDao.desactiverEtudiant(id);
+				response.sendRedirect("newEtudiants.jsp");
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		 }
 	}
 

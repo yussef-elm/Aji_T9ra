@@ -2,9 +2,7 @@
 
 <%@page import="java.util.*"%>
 <%@page import="com.aji_t9ra.Models.User"%>
-<%@page import="com.aji_t9ra.Models.Enseignant"%>
 <%@page import="com.aji_t9ra.Models.Etudiant"%>
-
 <%@ taglib prefix='c' uri='http://java.sun.com/jsp/jstl/core'%>
 
 
@@ -14,13 +12,19 @@ if (user == null) {
 	response.sendRedirect("login.jsp");
 	return;
 }
+if (user.isAdmin() == false) {
+	response.sendRedirect("index.jsp");
+	return;
+}
 %>
-<%
-String p = (String) request.getAttribute("profile");
 
-Enseignant enseignant = (Enseignant) request.getAttribute("enseignant");
-Etudiant etudiant = (Etudiant) request.getAttribute("etudiant");
+<%
+// get the students from the request object (sent by servlet)
+List<Etudiant> listNewEtudiants = (List<Etudiant>) request.getAttribute("listNewEtudiants");
 %>
+
+
+
 <!doctype html>
 <html class="no-js" lang="zxx">
 <head>
@@ -113,7 +117,6 @@ Etudiant etudiant = (Etudiant) request.getAttribute("etudiant");
 									<ul id="navigation">
 										<li><a href="index.jsp">Accueil</a></li>
 										<c:if test="${user.isAdmin() == true}">
-								
 											<li><a href="Enseignant?op=newEnseignants">Nouveaux
 													Enseignants</a></li>
 											<li><a href="Etudiant?op=newEtudiants">Nouveaux
@@ -137,125 +140,39 @@ Etudiant etudiant = (Etudiant) request.getAttribute("etudiant");
 	</header>
 
 	<main>
-		<c:if test="${enseignant!=null}">
-			</br>
-			</br>
+
+		<!-- Hero End -->
+		<div class="team-area ">
 			<div class="container">
-				<div class="">
-					<div class="card" style="border: solid;">
-						<div class="card-body text-center">
-							<c:if test="${enseignant.isApproved()==true}">
-								<img class="avatar rounded-circle"
-									style="max-width: 2rem; margin-top: -2rem"
-									src="assets/img/elements/certif.png" alt="certif">
-							</c:if>
-							<img class="avatar rounded-circle" style="border: solid;"
-								src="assets/img/elements/prof.jpg" alt="">
-							<c:if test="${enseignant.isActive()==true}">
-								<img class="avatar rounded-circle"
-									style="max-width: 2rem; margin-top: -2rem"
-									src="assets/img/elements/act.png" alt="">
-							</c:if>
-							<h4 class="card-title"><%=enseignant.getNom()%><%=" "%><%=enseignant.getPrenom()%></h4>
-							<h6 class="card-subtitle mb-2 text-muted">
-								<%=enseignant.getOrganisme() + " (" + enseignant.getNiveau() + ")"%>
-							</h6>
-							<h6 class="card-subtitle mb-2 text-muted">
-								<%=enseignant.getEmail()%></h6>
-							<p class="card-text"><%=enseignant.getDescription()%></p>
+				<div class="row">
 
-							<c:if test="${user.isAdmin()==true}">
-								<c:if
-									test="${enseignant.isApproved() == false && enseignant.isActive()==false}">
-									<a href="Enseignant?op=approver&id=<%=enseignant.getId()%>"
-										type="button" class="btn btn-success"
-										style="background: green;">Approver</a>
-									<a href="Enseignant?op=supprimer&id=<%=enseignant.getId()%>"
-										type="button" class="btn btn-danger"
-										style="background: #c70e0e;">Supprimer</a>
-								</c:if>
-
-								<c:if
-									test="${enseignant.isApproved() == true && enseignant.isActive()==true}">
-									<a href="Enseignant?op=desactiver&id=<%=enseignant.getId()%>"
-										type="button" class="btn btn-danger"
-										style="background: #c70e0e;">Desactiver</a>
-								</c:if>
-
-								<c:if
-									test="${enseignant.isApproved() == true && enseignant.isActive()==false}">
-									<a href="Enseignant?op=activer&id=<%=enseignant.getId()%>"
-										type="button" class="btn btn-danger"
-										style="background: green;">Activer</a>
-								</c:if>
-							</c:if>
+					<%
+					for (Etudiant e : listNewEtudiants) {
+					%>
+					<div class="col-lg-3 col-md-6 col-sm-6">
+						<div class="single-team mb-30">
+							<div class="team-img">
+								<img src="assets/img/elements/etu.png" alt=""
+									style="width: 70px; height: 90px; display: block; margin-left: auto; margin-right: auto;">
+							</div>
+							<div class="team-caption">
+								<h3>
+									<a href="profile.jsp"><%=e.getNom()%> <%=" "%><%=e.getPrenom()%></a>
+								</h3>
+								<p><%=e.getEcole()%></p>
+								<a href="Etudiant?op=profile&id=<%=e.getId()%>" type="button"
+									class="btn btn-info " >Profile</a>
+							</div>
 						</div>
 					</div>
+					<%
+					}
+					%>
 				</div>
 			</div>
-			</br>
-			</br>
-		</c:if>
-		<c:if test="${etudiant!=null}">
-			</br>
-			</br>
-			<div class="container">
-				<div class="">
-					<div class="card" style="border: solid;">
-						<div class="card-body text-center">
-							<c:if test="${etudiant.isApproved()==true}">
-								<img class="avatar rounded-circle"
-									style="max-width: 2rem; margin-top: -2rem"
-									src="assets/img/elements/certif.png" alt="certif">
-							</c:if>
-							<img class="avatar rounded-circle" style="border: solid;"
-								src="assets/img/elements/etup.png" alt="">
-							<c:if test="${etudiant.isActive()==true}">
-								<img class="avatar rounded-circle"
-									style="max-width: 2rem; margin-top: -2rem"
-									src="assets/img/elements/act.png" alt="">
-							</c:if>
-							<h4 class="card-title"><%=etudiant.getNom()%><%=" "%><%=etudiant.getPrenom()%></h4>
-							<h6 class="card-subtitle mb-2 text-muted">
-								<%=etudiant.getEcole() + " (" + etudiant.getNiveau_scolaire() + ")"%>
-							</h6>
-							<h6 class="card-subtitle mb-2 text-muted">
-								<%=etudiant.getEmail()%></h6>
-							<p class="card-text"><%=etudiant.getDescription()%></p>
+		</div>
 
-							<c:if test="${user.isAdmin()==true}">
-								<c:if
-									test="${etudiant.isApproved() == false && etudiant.isActive()==false}">
-									<a href="Etudiant?op=approver&id=<%=etudiant.getId()%>"
-										type="button" class="btn btn-success"
-										style="background: green;">Approver</a>
-									<a href="Etudiant?op=supprimer&id=<%=etudiant.getId()%>"
-										type="button" class="btn btn-danger"
-										style="background: #c70e0e;">Supprimer</a>
-								</c:if>
 
-								<c:if
-									test="${etudiant.isApproved() == true && etudiant.isActive()==true}">
-									<a href="Etudiant?op=desactiver&id=<%=etudiant.getId()%>"
-										type="button" class="btn btn-danger"
-										style="background: #c70e0e;">Desactiver</a>
-								</c:if>
-
-								<c:if
-									test="${etudiant.isApproved() == true && etudiant.isActive()==false}">
-									<a href="Etudiant?op=activer&id=<%=etudiant.getId()%>"
-										type="button" class="btn btn-danger"
-										style="background: green;">Activer</a>
-								</c:if>
-							</c:if>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			</br>
-			</br>
-		</c:if>
 	</main>
 
 	<footer>
@@ -329,17 +246,5 @@ Etudiant etudiant = (Etudiant) request.getAttribute("etudiant");
 	<!-- Jquery Plugins, main Jquery -->
 	<script src="./assets/js/plugins.js"></script>
 	<script src="./assets/js/main.js"></script>
-	<style>
-body {
-	padding: 2rem 0rem;
-}
-
-.avatar {
-	border: 0.3rem solid rgba(#fff, 0.3);
-	margin-top: -6rem;
-	margin-bottom: 1rem;
-	max-width: 9rem;
-}
-</style>
 </body>
 </html>

@@ -107,10 +107,11 @@ if (user == null) {
 								<nav>
 									<ul id="navigation">
 										<li><a href="index.jsp">Accueil</a></li>
-										<li><a href="about.jsp">À propos</a></li>
 										<c:if test="${user.isAdmin() == true}">
-											<li><a href="Enseignant?op=newEnseignants">Nouveaux
+                                            <li><a href="Enseignant?op=newEnseignants">Nouveaux
 												Enseignants</a></li>
+											<li><a href="Etudiant?op=newEtudiants">Nouveaux
+												Etudiants</a></li>
 										</c:if>
 									</ul>
 								</nav>

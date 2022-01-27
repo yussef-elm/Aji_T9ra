@@ -94,9 +94,67 @@ public class EnseignantController extends HttpServlet {
 			 try {
 				int id =Integer.parseInt(request.getParameter("id"));
 				Enseignant ens = enseignantDao.getEnseignantByID(id);
+				request.setAttribute("profile", "enseignant");
 				request.setAttribute("enseignant", ens);
 				RequestDispatcher dispatcher = request.getRequestDispatcher("profile.jsp");
 				dispatcher.forward(request, response);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		 }
+		 if(op.equals("approver"))
+		 {
+
+			 try {
+				int id =Integer.parseInt(request.getParameter("id"));
+				enseignantDao.ApproverEnseignant(id);
+				Enseignant ens = enseignantDao.getEnseignantByID(id);
+				request.setAttribute("enseignant", ens);
+				RequestDispatcher dispatcher = request.getRequestDispatcher("profile.jsp");
+				dispatcher.forward(request, response);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		 }
+		 if(op.equals("desactiver"))
+		 {
+
+			 try {
+				int id =Integer.parseInt(request.getParameter("id"));
+				enseignantDao.desactiverEnseignant(id);
+				Enseignant ens = enseignantDao.getEnseignantByID(id);
+				request.setAttribute("enseignant", ens);
+				RequestDispatcher dispatcher = request.getRequestDispatcher("profile.jsp");
+				dispatcher.forward(request, response);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		 }
+		 if(op.equals("activer"))
+		 {
+
+			 try {
+				int id =Integer.parseInt(request.getParameter("id"));
+				enseignantDao.activerEnseignant(id);
+				Enseignant ens = enseignantDao.getEnseignantByID(id);
+				request.setAttribute("enseignant", ens);
+				RequestDispatcher dispatcher = request.getRequestDispatcher("profile.jsp");
+				dispatcher.forward(request, response);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		 }
+		 if(op.equals("supprimer"))
+		 {
+
+			 try {
+				int id =Integer.parseInt(request.getParameter("id"));
+				enseignantDao.supprimerEnseignant(id);
+				response.sendRedirect("newEnseignants.jsp");
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

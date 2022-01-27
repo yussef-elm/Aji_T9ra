@@ -73,6 +73,7 @@ public class EnseignantDAO extends AbstractDAO {
                newEns.setApproved(true);
                newEns.setRole("enseignant");
                newEns.setAdmin(rs.getBoolean("isAdmin"));
+               newEns.setActive(rs.getBoolean("isActive"));
                
               listEnseignant.add(newEns); 
 	        	
@@ -104,6 +105,7 @@ public class EnseignantDAO extends AbstractDAO {
                 newEns.setDescription(rs.getString("description"));
                 newEns.setApproved(false);
                 newEns.setAdmin(false);
+                newEns.setActive(false);
                 
                listNewEnseignant.add(newEns); 
 	        	
@@ -132,12 +134,67 @@ public class EnseignantDAO extends AbstractDAO {
 	        	ens.setNiveau(rs.getString("niveau"));
 	        	ens.setOrganisme(rs.getString("organisme"));
 	        	ens.setDescription(rs.getString("description"));
-	        	ens.setApproved(false);
-	        	ens.setAdmin(false);
+	        	ens.setApproved(rs.getBoolean("isApproved"));
+	        	ens.setAdmin(rs.getBoolean("isAdmin"));
+	        	ens.setActive(rs.getBoolean("isActive"));
+	        	ens.setRole("enseignant");
    	        	
 	        }
 			
 	      return ens;	
 	}
+	
+	public void ApproverEnseignant(int id) throws SQLException {
+		 String query = "update  user set isApproved=?,isActive=? where id=?";
+		 String query1="update  enseignant set isApproved=?,isActive=? where id=?";
+	        PreparedStatement ps = this.getPrepareStatement(query);
+	        PreparedStatement ps1 = this.getPrepareStatement(query1);
+	        ps.setInt(1, 1);
+	        ps.setInt(2, 1);
+	        ps.setInt(3, id);
+	        ps1.setInt(1, 1);
+	        ps1.setInt(2, 1);
+	        ps1.setInt(3, id);
+	        ps.executeUpdate();
+	        ps1.executeUpdate();
+
+		}
+	public void desactiverEnseignant(int id) throws SQLException {
+		 String query = "update  user set isActive=? where id=?";
+		 String query1= "update  enseignant set isActive=? where id=?";
+	        PreparedStatement ps = this.getPrepareStatement(query);
+	        PreparedStatement ps1 = this.getPrepareStatement(query1);
+	        ps.setInt(1, 0);
+	        ps.setInt(2, id);
+	        ps1.setInt(1, 0);
+	        ps1.setInt(2, id);
+	        ps.executeUpdate();
+	        ps1.executeUpdate();
+		}
+	public void activerEnseignant(int id) throws SQLException {
+		 String query = "update  user set isActive=? where id=?";
+		 String query1= "update  enseignant set isActive=? where id=?";
+	        PreparedStatement ps = this.getPrepareStatement(query);
+	        PreparedStatement ps1 = this.getPrepareStatement(query1);
+	        ps.setInt(1, 1);
+	        ps.setInt(2, id);
+	        ps1.setInt(1, 1);
+	        ps1.setInt(2, id);
+	        ps.executeUpdate();
+	        ps1.executeUpdate();
+		}
+	public void supprimerEnseignant(int id) throws SQLException {
+		 String query = "delete from  enseignant where id=?";
+		 String query1= "delete from user where id=?";
+		 String query2= "delete from  enseignant_niveau id_user_enseignant=?";
+	        PreparedStatement ps = this.getPrepareStatement(query);
+	        PreparedStatement ps1 = this.getPrepareStatement(query1);
+	        PreparedStatement ps2 = this.getPrepareStatement(query2);
+	        ps.setInt(1, id);
+	        ps1.setInt(1, id);
+	        ps2.setInt(1, id);
+	        ps.executeUpdate();  ps1.executeUpdate();ps2.executeUpdate();
+
+		}
 
 }
