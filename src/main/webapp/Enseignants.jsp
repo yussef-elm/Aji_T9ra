@@ -17,7 +17,16 @@ if (user.isAdmin() == false) {
 	return;
 }
 %>
+<%
+int nosEnseignant = (int) request.getAttribute("nosEnseignant");
+int newEnseignant = (int) request.getAttribute("newEnseignant");
+int DEnseignant = (int) request.getAttribute("DEnseignant");
+int nosEtudiant = (int) request.getAttribute("nosEtudiant");
+int newEtudiant = (int) request.getAttribute("newEtudiant");
+int DEtudiant = (int) request.getAttribute("DEtudiant");
+int DUsers = (int) request.getAttribute("DUsers");
 
+%>
 <%
 // get the students from the request object (sent by servlet)
 List<Enseignant> listEnseignants = (List<Enseignant>) request.getAttribute("listEnseignants");
@@ -50,6 +59,9 @@ List<Enseignant> listEnseignants = (List<Enseignant>) request.getAttribute("list
 <link rel="stylesheet" href="assets/css/slick.css">
 <link rel="stylesheet" href="assets/css/nice-select.css">
 <link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/navbar.css">
+<link rel="stylesheet" href="assets/css/navbar.css">
+
 </head>
 <body>
 	<!--? Preloader Start -->
@@ -97,36 +109,36 @@ List<Enseignant> listEnseignants = (List<Enseignant>) request.getAttribute("list
 					</div>
 				</div>
 				<div class="header-bottom header-sticky">
-					<!-- Logo -->
-					<div class="logo d-none d-lg-block"
-						style="background-color: white; height: 40px; width: 100px; text-align: center;">
-						<a href="index.html"><img src="assets/img/logo/logo1.png"
-							alt=""></a>
-					</div>
+
 					<div class="container">
 						<div class="menu-wrapper">
-							<!-- Logo -->
-							<div class="logo logo2 d-block d-lg-none"
-								style="background-color: white; height: 40px; width: 100px; text-align: center;">
-								<a href="index.html"><img src="assets/img/logo/logo1.png"
-									alt=""></a>
-							</div>
+
 							<!-- Main-menu -->
 							<div class="main-menu d-none d-lg-block">
 								<nav>
-									<ul id="navigation">
-										<li><a href="index.jsp">Accueil</a></li>
+
+									<ul class=" navigation navbar-links">
+										<li class="navbar-dropdown"><a style="padding-top: 30px;"
+											href="index.html"><img src="assets/img/logo/logo1.png"></a></li>
+										<li class="navbar-dropdown"><a href="#">Acceuil</a></li>
 										<c:if test="${user.isAdmin() == true}">
-											<li><a href="Enseignant?op=Enseignants">Nos
-													Enseignants</a></li>
-											<li><a href="Etudiant?op=Etudiants">Nos Etudiants</a></li>
-											<li><a href="Enseignant?op=newEnseignants">Nouveaux
-													Enseignants</a></li>
-											<li><a href="Etudiant?op=newEtudiants">Nouveaux
-													Etudiants</a></li>
+
+											<li class="navbar-dropdown"><a href="#">Enseignants</a>
+												<div class="dropdown">
+													<a href="Enseignant?op=Enseignants">Nos Enseignants <%="(" + nosEnseignant + ")"%></a>
+													<a href="Enseignant?op=newEnseignants">Nouveaux
+														Enseignants <%="(" + newEnseignant + ")"%></a>
+												</div></li>
+											<li class="navbar-dropdown"><a href="#">Etudiants</a>
+												<div class="dropdown">
+													<a href="Etudiant?op=Etudiants">Nos Etudiants <%="(" + nosEtudiant + ")"%></a>
+													<a href="Etudiant?op=newEtudiants">Nouveaux
+														Etudiants <%="(" + newEtudiant + ")"%></a>
+												</div></li>
 											<li><a href="User?op=ComptesDesactiver">Comptes
-													Desactivés</a></li>
+													Desactivés <%="(" + DUsers + ")"%></a></li>
 										</c:if>
+
 									</ul>
 								</nav>
 							</div>

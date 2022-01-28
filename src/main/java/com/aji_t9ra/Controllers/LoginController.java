@@ -1,6 +1,8 @@
 package com.aji_t9ra.Controllers;
 
 import java.io.IOException;
+import java.sql.SQLException;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -9,7 +11,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.aji_t9ra.Models.User;
+import com.aji_t9ra.DAO.EnseignantDAO;
+import com.aji_t9ra.DAO.EtudiantDAO;
 import com.aji_t9ra.DAO.LoginDAO;
+import com.aji_t9ra.DAO.UserDAO;
 
 /**
  * Servlet implementation class LoginController
@@ -19,6 +24,9 @@ public class LoginController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     private LoginDAO loginDao = new LoginDAO();
+    private EnseignantDAO enseignantDao =new EnseignantDAO();
+    private EtudiantDAO etudiantDao=new EtudiantDAO();
+    private UserDAO userDao=new UserDAO();
     public LoginController() {
         super();
         // TODO Auto-generated constructor stub
@@ -37,16 +45,42 @@ public class LoginController extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-          String email = request.getParameter("email");
+        try { 
+		String email = request.getParameter("email");
           String password= request.getParameter("password");
           User user = loginDao.login(email, password);
-          if(user!=null && user.isApproved()){
+          if(user!=null && user.isApproved() && user.isActive()){
               HttpSession session = request.getSession();
+              session=Counts(session);
               session.setAttribute("user", user);
               response.sendRedirect("index.jsp");
           }else{
               response.sendRedirect("login.jsp");
           }
+        }catch (SQLException e) {
+        	e.printStackTrace();
+        	// TODO: handle exception
+		}
 	}
 
+	public HttpSession Counts(HttpSession session) throws SQLException
+	{
+		int nbrEn = enseignantDao.nombreNosEnseignant();
+		int nbrNewEn=enseignantDao.nombreNouveauEnseignant();
+		int nbrDEns=enseignantDao.nombreDesacEnseignant();
+		int nbrEtu=etudiantDao.nombreNosEtudiant();
+		int nbrNewEt=etudiantDao.nombreNouveauEtudiant();
+		int nbrDEtu= etudiantDao.nombreDesacEtudiant();
+		int nbrDUsers=userDao.nombreDesacUser();
+		session.setAttribute("nosEnseignant",nbrEn );
+		session.setAttribute("newEnseignant",nbrNewEn );
+		session.setAttribute("DEnseignant",nbrDEns );
+		session.setAttribute("nosEtudiant",nbrEtu );
+		session.setAttribute("newEtudiant",nbrNewEt );
+		session.setAttribute("DEtudiant",nbrDEtu );
+		session.setAttribute("DUsers", nbrDUsers);
+		return session;
+	}
+	
+	
 }

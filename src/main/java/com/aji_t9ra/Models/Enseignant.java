@@ -7,7 +7,7 @@ public class Enseignant extends User{
 	private String description;
 	private String organisme;
 	private String niveau;
-	private String[] listMatieres;
+	private List<Matiere> listMatieres;
 	
 	
 	public Enseignant() {
@@ -46,13 +46,12 @@ public class Enseignant extends User{
 	public void setOrganisme(String organisme) {
 		this.organisme = organisme;
 	}
-	public String[] getListMatieres() {
+	public List<Matiere> getListMatieres() {
 		return listMatieres;
 	}
-	public void setListMatieres(String[] listMatieres) {
+	public void setListMatieres(List<Matiere> listMatieres) {
 		this.listMatieres = listMatieres;
 	}
-
 
 	
 	

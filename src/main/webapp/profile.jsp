@@ -1,9 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"%>
 
 <%@page import="java.util.*"%>
-<%@page import="com.aji_t9ra.Models.User"%>
-<%@page import="com.aji_t9ra.Models.Enseignant"%>
-<%@page import="com.aji_t9ra.Models.Etudiant"%>
+<%@page import="com.aji_t9ra.Models.*"%>
+
 
 <%@ taglib prefix='c' uri='http://java.sun.com/jsp/jstl/core'%>
 
@@ -15,6 +14,17 @@ if (user == null) {
 	return;
 }
 %>
+<%
+int nosEnseignant = (int) request.getAttribute("nosEnseignant");
+int newEnseignant = (int) request.getAttribute("newEnseignant");
+int DEnseignant = (int) request.getAttribute("DEnseignant");
+int nosEtudiant = (int) request.getAttribute("nosEtudiant");
+int newEtudiant = (int) request.getAttribute("newEtudiant");
+int DEtudiant = (int) request.getAttribute("DEtudiant");
+int DUsers = (int) request.getAttribute("DUsers");
+
+%>
+
 <%
 String p = (String) request.getAttribute("profile");
 
@@ -46,6 +56,8 @@ Etudiant etudiant = (Etudiant) request.getAttribute("etudiant");
 <link rel="stylesheet" href="assets/css/slick.css">
 <link rel="stylesheet" href="assets/css/nice-select.css">
 <link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/navbar.css">
+
 </head>
 <body>
 	<!--? Preloader Start -->
@@ -93,35 +105,36 @@ Etudiant etudiant = (Etudiant) request.getAttribute("etudiant");
 					</div>
 				</div>
 				<div class="header-bottom header-sticky">
-					<!-- Logo -->
-					<div class="logo d-none d-lg-block"
-						style="background-color: white; height: 40px; width: 100px; text-align: center;">
-						<a href="index.html"><img src="assets/img/logo/logo1.png"
-							alt=""></a>
-					</div>
+
 					<div class="container">
 						<div class="menu-wrapper">
-							<!-- Logo -->
-							<div class="logo logo2 d-block d-lg-none"
-								style="background-color: white; height: 40px; width: 100px; text-align: center;">
-								<a href="index.html"><img src="assets/img/logo/logo1.png"
-									alt=""></a>
-							</div>
+
 							<!-- Main-menu -->
 							<div class="main-menu d-none d-lg-block">
 								<nav>
-									<ul id="navigation">
-										<li><a href="index.jsp">Accueil</a></li>
+
+									<ul class=" navigation navbar-links">
+										<li class="navbar-dropdown"><a style="padding-top: 30px;"
+											href="index.html"><img src="assets/img/logo/logo1.png"></a></li>
+										<li class="navbar-dropdown"><a href="#">Acceuil</a></li>
 										<c:if test="${user.isAdmin() == true}">
-                                            <li><a href="Enseignant?op=Enseignants">Nos
-													Enseignants</a></li>
-											<li><a href="Etudiant?op=Etudiants">Nos Etudiants</a></li>
-											<li><a href="Enseignant?op=newEnseignants">Nouveaux
-													Enseignants</a></li>
-											<li><a href="Etudiant?op=newEtudiants">Nouveaux
-													Etudiants</a></li>
-											<li><a href="User?op=ComptesDesactiver">Comptes Desactivés</a></li>
+
+											<li class="navbar-dropdown"><a href="#">Enseignants</a>
+												<div class="dropdown">
+													<a href="Enseignant?op=Enseignants">Nos Enseignants <%="(" + nosEnseignant + ")"%></a>
+													<a href="Enseignant?op=newEnseignants">Nouveaux
+														Enseignants <%="(" + newEnseignant + ")"%></a>
+												</div></li>
+											<li class="navbar-dropdown"><a href="#">Etudiants</a>
+												<div class="dropdown">
+													<a href="Etudiant?op=Etudiants">Nos Etudiants <%="(" + nosEtudiant + ")"%></a>
+													<a href="Etudiant?op=newEtudiants">Nouveaux
+														Etudiants <%="(" + newEtudiant + ")"%></a>
+												</div></li>
+											<li><a href="User?op=ComptesDesactiver">Comptes
+													Desactivés <%="(" + DUsers + ")"%></a></li>
 										</c:if>
+
 									</ul>
 								</nav>
 							</div>
@@ -165,6 +178,16 @@ Etudiant etudiant = (Etudiant) request.getAttribute("etudiant");
 							</h6>
 							<h6 class="card-subtitle mb-2 text-muted">
 								<%=enseignant.getEmail()%></h6>
+							<c:if test="${enseignant.getListMatieres() !=null }">
+								<h6>
+									Matiéres :<%
+								for (Matiere m : enseignant.getListMatieres()) {
+								%><%=m.getNom() + "/"%>
+									<%
+									}
+									%>
+								</h6>
+							</c:if>
 							<p class="card-text"><%=enseignant.getDescription()%></p>
 
 							<c:if test="${user.isAdmin()==true}">

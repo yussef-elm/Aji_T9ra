@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.aji_t9ra.DAO.EnseignantDAO;
+import com.aji_t9ra.DAO.EtudiantDAO;
 import com.aji_t9ra.DAO.MatiereDAO;
 import com.aji_t9ra.DAO.UserDAO;
 import com.aji_t9ra.Models.Enseignant;
@@ -33,6 +34,7 @@ public class EnseignantController extends HttpServlet {
      */
 	private UserDAO userDao = new UserDAO();
 	private EnseignantDAO enseignantDao= new EnseignantDAO();
+	private EtudiantDAO etudiantDao=new EtudiantDAO();
 	private MatiereDAO matiereDao=new MatiereDAO();
     public EnseignantController() {
         super();
@@ -82,9 +84,10 @@ public class EnseignantController extends HttpServlet {
 			 try {
 			   HttpSession session =request.getSession();
 			   String[] matieres = (String[])request.getParameterValues("matiere[]");
+			   List<Matiere> listMatiere = matiereDao.getMatieresbyNom(matieres);
 			   User newUser= (User)session.getAttribute("newUser");
 			   Enseignant newEnseignant = (Enseignant)session.getAttribute("newEnseignant");
-			   newEnseignant.setListMatieres(matieres);
+			   newEnseignant.setListMatieres(listMatiere);
 			   int id =userDao.AddUser(newUser);
 			   newEnseignant.setId(id);
 			   enseignantDao.AddEnseignant(newEnseignant);
@@ -101,6 +104,7 @@ public class EnseignantController extends HttpServlet {
 
 			 try {
 				List<Enseignant> listNewEnseignants = enseignantDao.getNewEnseignants();
+		        request= Counts(request);		
 				request.setAttribute("listEnseignants", listNewEnseignants);
 				RequestDispatcher dispatcher = request.getRequestDispatcher("Enseignants.jsp");
 				dispatcher.forward(request, response);
@@ -114,7 +118,8 @@ public class EnseignantController extends HttpServlet {
 
 			 try {
 				List<Enseignant> listNewEnseignants = enseignantDao.getEnseignants();
-				request.setAttribute("listEnseignants", listNewEnseignants);
+				request= Counts(request);
+				request.setAttribute("listEnseignants", listNewEnseignants);	
 				RequestDispatcher dispatcher = request.getRequestDispatcher("Enseignants.jsp");
 				dispatcher.forward(request, response);
 			} catch (SQLException e) {
@@ -128,6 +133,7 @@ public class EnseignantController extends HttpServlet {
 			 try {
 				int id =Integer.parseInt(request.getParameter("id"));
 				Enseignant ens = enseignantDao.getEnseignantByID(id);
+				request= Counts(request);
 				request.setAttribute("profile", "enseignant");
 				request.setAttribute("enseignant", ens);
 				RequestDispatcher dispatcher = request.getRequestDispatcher("profile.jsp");
@@ -144,6 +150,7 @@ public class EnseignantController extends HttpServlet {
 				int id =Integer.parseInt(request.getParameter("id"));
 				enseignantDao.ApproverEnseignant(id);
 				Enseignant ens = enseignantDao.getEnseignantByID(id);
+				request= Counts(request);
 				request.setAttribute("enseignant", ens);
 				RequestDispatcher dispatcher = request.getRequestDispatcher("profile.jsp");
 				dispatcher.forward(request, response);
@@ -159,6 +166,7 @@ public class EnseignantController extends HttpServlet {
 				int id =Integer.parseInt(request.getParameter("id"));
 				enseignantDao.desactiverEnseignant(id);
 				Enseignant ens = enseignantDao.getEnseignantByID(id);
+				request= Counts(request);
 				request.setAttribute("enseignant", ens);
 				RequestDispatcher dispatcher = request.getRequestDispatcher("profile.jsp");
 				dispatcher.forward(request, response);
@@ -174,6 +182,7 @@ public class EnseignantController extends HttpServlet {
 				int id =Integer.parseInt(request.getParameter("id"));
 				enseignantDao.activerEnseignant(id);
 				Enseignant ens = enseignantDao.getEnseignantByID(id);
+				request= Counts(request);
 				request.setAttribute("enseignant", ens);
 				RequestDispatcher dispatcher = request.getRequestDispatcher("profile.jsp");
 				dispatcher.forward(request, response);
@@ -196,4 +205,25 @@ public class EnseignantController extends HttpServlet {
 		 }
 	}
 
+	
+	public HttpServletRequest Counts(HttpServletRequest request) throws SQLException
+	{
+		int nbrEn = enseignantDao.nombreNosEnseignant();
+		int nbrNewEn=enseignantDao.nombreNouveauEnseignant();
+		int nbrDEns=enseignantDao.nombreDesacEnseignant();
+		int nbrEtu=etudiantDao.nombreNosEtudiant();
+		int nbrNewEt=etudiantDao.nombreNouveauEtudiant();
+		int nbrDEtu= etudiantDao.nombreDesacEtudiant();
+		int nbrDUsers=userDao.nombreDesacUser();
+		request.setAttribute("nosEnseignant",nbrEn );
+		request.setAttribute("newEnseignant",nbrNewEn );
+		request.setAttribute("DEnseignant",nbrDEns );
+		request.setAttribute("nosEtudiant",nbrEtu );
+		request.setAttribute("newEtudiant",nbrNewEt );
+		request.setAttribute("DEtudiant",nbrDEtu );
+		request.setAttribute("DUsers", nbrDUsers);
+		return request;
+	}
+	
+	
 }

@@ -59,4 +59,20 @@ public class UserDAO extends AbstractDAO {
 		return listNewUsers;
 	}
 
+	
+
+	
+	public int nombreDesacUser() throws SQLException {
+		String query ="select count(*) from user where isApproved=? and isActive=?";
+		PreparedStatement ps = this.getPrepareStatement(query);
+        ps.setInt(1, 1);
+        ps.setInt(2, 0);
+        ResultSet rs = ps.executeQuery();
+        rs.next();
+        int nbr=rs.getInt(1);
+		return nbr;
+	}
+	
+	
+	
 }

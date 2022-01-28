@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.aji_t9ra.DAO.EnseignantDAO;
 import com.aji_t9ra.DAO.EtudiantDAO;
 import com.aji_t9ra.DAO.UserDAO;
 import com.aji_t9ra.Models.Enseignant;
@@ -30,6 +31,7 @@ public class EtudiantController extends HttpServlet {
 	 */
 	private UserDAO userDao = new UserDAO();
 	private EtudiantDAO etudiantDao = new EtudiantDAO();
+	private EnseignantDAO enseignantDao=new EnseignantDAO();
 
 	public EtudiantController() {
 		super();
@@ -83,6 +85,7 @@ public class EtudiantController extends HttpServlet {
 
 			 try {
 				List<Etudiant> listNewEtudiants = etudiantDao.getNewEtudiants();
+				request= Counts(request);
 				request.setAttribute("listEtudiants", listNewEtudiants);
 				RequestDispatcher dispatcher = request.getRequestDispatcher("Etudiants.jsp");
 				dispatcher.forward(request, response);
@@ -96,6 +99,7 @@ public class EtudiantController extends HttpServlet {
 
 			 try {
 				List<Etudiant> listNewEtudiants = etudiantDao.getEtudiants();
+				request= Counts(request);
 				request.setAttribute("listEtudiants", listNewEtudiants);
 				RequestDispatcher dispatcher = request.getRequestDispatcher("Etudiants.jsp");
 				dispatcher.forward(request, response);
@@ -110,6 +114,7 @@ public class EtudiantController extends HttpServlet {
 			 try {
 				int id =Integer.parseInt(request.getParameter("id"));
 				Etudiant etd = etudiantDao.getEtudiantByID(id);
+				request= Counts(request);
 				request.setAttribute("profile", "etudiant");
 				request.setAttribute("etudiant", etd);
 				RequestDispatcher dispatcher = request.getRequestDispatcher("profile.jsp");
@@ -126,6 +131,7 @@ public class EtudiantController extends HttpServlet {
 				int id =Integer.parseInt(request.getParameter("id"));
 				etudiantDao.ApproverEtudiant(id);
 				Etudiant etd = etudiantDao.getEtudiantByID(id);
+				request= Counts(request);
 				request.setAttribute("etudiant", etd);
 				RequestDispatcher dispatcher = request.getRequestDispatcher("profile.jsp");
 				dispatcher.forward(request, response);
@@ -141,6 +147,7 @@ public class EtudiantController extends HttpServlet {
 				int id =Integer.parseInt(request.getParameter("id"));
 				etudiantDao.desactiverEtudiant(id);
 				Etudiant etd = etudiantDao.getEtudiantByID(id);
+				request= Counts(request);
 				request.setAttribute("etudiant", etd);
 				RequestDispatcher dispatcher = request.getRequestDispatcher("profile.jsp");
 				dispatcher.forward(request, response);
@@ -156,6 +163,7 @@ public class EtudiantController extends HttpServlet {
 				int id =Integer.parseInt(request.getParameter("id"));
 				etudiantDao.activerEtudiant(id);
 				Etudiant etd = etudiantDao.getEtudiantByID(id);
+				request= Counts(request);
 				request.setAttribute("etudiant", etd);
 				RequestDispatcher dispatcher = request.getRequestDispatcher("profile.jsp");
 				dispatcher.forward(request, response);
@@ -178,4 +186,24 @@ public class EtudiantController extends HttpServlet {
 		 }
 	}
 
+	
+	public HttpServletRequest Counts(HttpServletRequest request) throws SQLException
+	{
+		int nbrEn = enseignantDao.nombreNosEnseignant();
+		int nbrNewEn=enseignantDao.nombreNouveauEnseignant();
+		int nbrDEns=enseignantDao.nombreDesacEnseignant();
+		int nbrEtu=etudiantDao.nombreNosEtudiant();
+		int nbrNewEt=etudiantDao.nombreNouveauEtudiant();
+		int nbrDEtu= etudiantDao.nombreDesacEtudiant();
+		int nbrDUsers=userDao.nombreDesacUser();
+		request.setAttribute("nosEnseignant",nbrEn );
+		request.setAttribute("newEnseignant",nbrNewEn );
+		request.setAttribute("DEnseignant",nbrDEns );
+		request.setAttribute("nosEtudiant",nbrEtu );
+		request.setAttribute("newEtudiant",nbrNewEt );
+		request.setAttribute("DEtudiant",nbrDEtu );
+		request.setAttribute("DUsers", nbrDUsers);
+		return request;
+	}
+	
 }

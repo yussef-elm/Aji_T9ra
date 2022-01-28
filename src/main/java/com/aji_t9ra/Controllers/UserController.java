@@ -25,7 +25,7 @@ import com.aji_t9ra.Models.User;
 @WebServlet("/User")
 public class UserController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-    private UserDAO userDAO=new UserDAO();
+    private UserDAO userDao=new UserDAO();
     private EnseignantDAO enseignantDao= new EnseignantDAO();
     private EtudiantDAO etudiantDao=new EtudiantDAO();
 
@@ -88,6 +88,7 @@ public class UserController extends HttpServlet {
 			try {
 				List<Etudiant> listEtudiants = etudiantDao.getDescativeEtudiants();
 				List<Enseignant> listEnseignants = enseignantDao.getDesactiveEnseignants();
+				request=Counts(request);
  				request.setAttribute("listEtudiants", listEtudiants);
  				request.setAttribute("listEnseignants", listEnseignants);
 				RequestDispatcher dispatcher = request.getRequestDispatcher("Users.jsp");
@@ -100,4 +101,23 @@ public class UserController extends HttpServlet {
 		
 	}
 
+	public HttpServletRequest Counts(HttpServletRequest request) throws SQLException
+	{
+		int nbrEn = enseignantDao.nombreNosEnseignant();
+		int nbrNewEn=enseignantDao.nombreNouveauEnseignant();
+		int nbrDEns=enseignantDao.nombreDesacEnseignant();
+		int nbrEtu=etudiantDao.nombreNosEtudiant();
+		int nbrNewEt=etudiantDao.nombreNouveauEtudiant();
+		int nbrDEtu= etudiantDao.nombreDesacEtudiant();
+		int nbrDUsers=userDao.nombreDesacUser();
+		request.setAttribute("nosEnseignant",nbrEn );
+		request.setAttribute("newEnseignant",nbrNewEn );
+		request.setAttribute("DEnseignant",nbrDEns );
+		request.setAttribute("nosEtudiant",nbrEtu );
+		request.setAttribute("newEtudiant",nbrNewEt );
+		request.setAttribute("DEtudiant",nbrDEtu );
+		request.setAttribute("DUsers", nbrDUsers);
+		return request;
+	}
+	
 }
