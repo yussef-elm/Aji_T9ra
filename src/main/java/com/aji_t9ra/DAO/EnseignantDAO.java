@@ -55,9 +55,10 @@ public class EnseignantDAO extends AbstractDAO {
 		List<Enseignant> listEnseignant=new ArrayList();
 		 String query = " select e.*,s.niveau from enseignant e "
 	        		+ "left join enseignant_niveau n on e.id=n.id_user_enseignant "
-	        		+ "left join niveau_scolaire s on n.id_niveau_scolaire=s.id where e.isApproved=?";
+	        		+ "left join niveau_scolaire s on n.id_niveau_scolaire=s.id where e.isApproved=? and isActive=?";
 	        PreparedStatement ps = this.getPrepareStatement(query);
 	        ps.setInt(1, 1);
+	        ps.setInt(2, 1);
 	        ResultSet rs = ps.executeQuery();
 	        while(rs.next())
 	        {
@@ -82,7 +83,39 @@ public class EnseignantDAO extends AbstractDAO {
 	        
 		return listEnseignant;
 	}
-	
+	public List<Enseignant> getDesactiveEnseignants() throws SQLException
+	{
+		List<Enseignant> listEnseignant=new ArrayList();
+		 String query = " select e.*,s.niveau from enseignant e "
+	        		+ "left join enseignant_niveau n on e.id=n.id_user_enseignant "
+	        		+ "left join niveau_scolaire s on n.id_niveau_scolaire=s.id where e.isApproved=? and isActive=?";
+	        PreparedStatement ps = this.getPrepareStatement(query);
+	        ps.setInt(1, 1);
+	        ps.setInt(2, 0);
+	        ResultSet rs = ps.executeQuery();
+	        while(rs.next())
+	        {
+	        	Enseignant newEns= new Enseignant();
+	        	newEns.setId(rs.getInt("ID"));
+	        	newEns.setNom(rs.getString("NOM"));
+	        	newEns.setPrenom(rs.getString("PRENOM"));
+	        	newEns.setEmail(rs.getString("EMAIL"));
+	        	newEns.setUsername(rs.getString("USERNAME"));
+	        	newEns.setNiveau(rs.getString("Niveau"));
+               newEns.setOrganisme(rs.getString("organisme"));
+               newEns.setDescription(rs.getString("description"));
+               newEns.setApproved(true);
+               newEns.setRole("enseignant");
+               newEns.setAdmin(rs.getBoolean("isAdmin"));
+               newEns.setActive(rs.getBoolean("isActive"));
+               
+              listEnseignant.add(newEns); 
+	        	
+	        }
+	        
+	        
+		return listEnseignant;
+	}
 	
 	public List<Enseignant> getNewEnseignants() throws SQLException{
 		List<Enseignant> listNewEnseignant=new ArrayList();

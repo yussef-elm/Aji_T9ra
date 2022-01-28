@@ -2,7 +2,9 @@
 
 <%@page import="java.util.*"%>
 <%@page import="com.aji_t9ra.Models.User"%>
+<%@page import="com.aji_t9ra.Models.Enseignant"%>
 <%@page import="com.aji_t9ra.Models.Etudiant"%>
+
 <%@ taglib prefix='c' uri='http://java.sun.com/jsp/jstl/core'%>
 
 
@@ -20,7 +22,8 @@ if (user.isAdmin() == false) {
 
 <%
 // get the students from the request object (sent by servlet)
-List<Etudiant> listNewEtudiants = (List<Etudiant>) request.getAttribute("listNewEtudiants");
+List<Enseignant> listEnseignants = (List<Enseignant>) request.getAttribute("listEnseignants");
+List<Etudiant> listEtudiants =(List<Etudiant>) request.getAttribute("listEtudiants");
 %>
 
 
@@ -117,10 +120,15 @@ List<Etudiant> listNewEtudiants = (List<Etudiant>) request.getAttribute("listNew
 									<ul id="navigation">
 										<li><a href="index.jsp">Accueil</a></li>
 										<c:if test="${user.isAdmin() == true}">
+											<li><a href="Enseignant?op=Enseignants">Nos
+													Enseignants</a></li>
+											<li><a href="Etudiant?op=Etudiants">Nos Etudiants</a></li>
 											<li><a href="Enseignant?op=newEnseignants">Nouveaux
 													Enseignants</a></li>
 											<li><a href="Etudiant?op=newEtudiants">Nouveaux
 													Etudiants</a></li>
+											<li><a href="User?op=ComptesDesactiver">Comptes
+													Desactivés</a></li>
 										</c:if>
 									</ul>
 								</nav>
@@ -140,14 +148,53 @@ List<Etudiant> listNewEtudiants = (List<Etudiant>) request.getAttribute("listNew
 	</header>
 
 	<main>
-
+      </br>
 		<!-- Hero End -->
 		<div class="team-area ">
 			<div class="container">
+			    <h3>Comptes Enseignants Desactivés :</h3>
+			    </br>
 				<div class="row">
 
 					<%
-					for (Etudiant e : listNewEtudiants) {
+					for (Enseignant e : listEnseignants) {
+					%>
+					<div class="col-lg-3 col-md-6 col-sm-6">
+						<div class="single-team mb-30">
+							<div class="team-img">
+								<img src="assets/img/elements/prof.jpg" alt=""
+									style="width: 140px; height: 140px; display: block; margin-left: auto; margin-right: auto;">
+							</div>
+							<div class="team-caption">
+								<h3>
+									<a href="profile.jsp"><%=e.getNom()%> <%=" "%><%=e.getPrenom()%></a>
+								</h3>
+								<p><%=e.getOrganisme()%></p>
+								<a href="Enseignant?op=profile&id=<%=e.getId()%>" type="button"
+									class="btn btn-info">Profile</a>
+							</div>
+						</div>
+					</div>
+
+					<%
+					}
+					%>
+
+
+				</div>
+			</div>
+		</div>
+		
+		</br>
+				<!-- Hero End -->
+		<div class="team-area ">
+			<div class="container">
+			<h3>Comptes Etudiants Desactivés :</h3>
+			</br>
+				<div class="row">
+
+					<%
+					for (Etudiant e : listEtudiants) {
 					%>
 					<div class="col-lg-3 col-md-6 col-sm-6">
 						<div class="single-team mb-30">
@@ -172,7 +219,7 @@ List<Etudiant> listNewEtudiants = (List<Etudiant>) request.getAttribute("listNew
 			</div>
 		</div>
 
-
+</br>
 	</main>
 
 	<footer>

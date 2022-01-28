@@ -50,9 +50,10 @@ public class EtudiantDAO extends AbstractDAO {
 	{
 		 List<Etudiant> listEtudiant=new ArrayList();
 		 String query = "  select e.*,n.niveau from etudiant e left join "
-		 		+ "niveau_scolaire n on e.ID_NIVEAU_SCOLAIRE=n.id where e.isApproved=?";
+		 		+ "niveau_scolaire n on e.ID_NIVEAU_SCOLAIRE=n.id where e.isApproved=? and isActive=?";
 	        PreparedStatement ps = this.getPrepareStatement(query);
 	        ps.setInt(1, 1);
+	        ps.setInt(2,1);
 	        ResultSet rs = ps.executeQuery();
 	        while(rs.next())
 	        {
@@ -77,7 +78,38 @@ public class EtudiantDAO extends AbstractDAO {
 	        
 		return listEtudiant;
 	}
-	
+	public List<Etudiant> getDescativeEtudiants() throws SQLException
+	{
+		 List<Etudiant> listEtudiant=new ArrayList();
+		 String query = "  select e.*,n.niveau from etudiant e left join "
+		 		+ "niveau_scolaire n on e.ID_NIVEAU_SCOLAIRE=n.id where e.isApproved=? and isActive=?";
+	        PreparedStatement ps = this.getPrepareStatement(query);
+	        ps.setInt(1, 1);
+	        ps.setInt(2,0);
+	        ResultSet rs = ps.executeQuery();
+	        while(rs.next())
+	        {
+	        	Etudiant newEtu= new Etudiant();
+	        	newEtu.setId(rs.getInt("ID"));
+	        	newEtu.setNom(rs.getString("NOM"));
+	        	newEtu.setPrenom(rs.getString("PRENOM"));
+	        	newEtu.setEmail(rs.getString("EMAIL"));
+	        	newEtu.setUsername(rs.getString("USERNAME"));
+	        	newEtu.setNiveau_scolaire(rs.getString("niveau"));
+	        	newEtu.setEcole(rs.getString("ecole"));
+	        	newEtu.setDescription(rs.getString("description"));
+	        	newEtu.setApproved(true);
+	        	newEtu.setRole("etudiant");
+	        	newEtu.setAdmin(rs.getBoolean("isAdmin"));
+	        	newEtu.setActive(rs.getBoolean("isActive"));
+               
+              listEtudiant.add(newEtu); 
+	        	
+	        }
+	        
+	        
+		return listEtudiant;
+	}
 	
 	public List<Etudiant> getNewEtudiants() throws SQLException{
 		List<Etudiant> listNewEtudiant=new ArrayList();

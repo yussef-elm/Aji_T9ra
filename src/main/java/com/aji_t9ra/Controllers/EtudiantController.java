@@ -83,8 +83,21 @@ public class EtudiantController extends HttpServlet {
 
 			 try {
 				List<Etudiant> listNewEtudiants = etudiantDao.getNewEtudiants();
-				request.setAttribute("listNewEtudiants", listNewEtudiants);
-				RequestDispatcher dispatcher = request.getRequestDispatcher("newEtudiants.jsp");
+				request.setAttribute("listEtudiants", listNewEtudiants);
+				RequestDispatcher dispatcher = request.getRequestDispatcher("Etudiants.jsp");
+				dispatcher.forward(request, response);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		 }
+		 if(op.equals("Etudiants"))
+		 {
+
+			 try {
+				List<Etudiant> listNewEtudiants = etudiantDao.getEtudiants();
+				request.setAttribute("listEtudiants", listNewEtudiants);
+				RequestDispatcher dispatcher = request.getRequestDispatcher("Etudiants.jsp");
 				dispatcher.forward(request, response);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block

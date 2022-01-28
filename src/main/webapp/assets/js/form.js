@@ -63,7 +63,7 @@ function checkInputs() {
 	if (passwordValue === '') {
 		setErrorFor(password, 'Password cannot be blank');		p=false;
 
-	} else if (passTest(password)) {
+	} else if (passTest(passwordValue)) {
 		setErrorFor(password, 'En moins 8 caractéres avec un chiffre et une majiscule');		p=false;
 
 	} else {

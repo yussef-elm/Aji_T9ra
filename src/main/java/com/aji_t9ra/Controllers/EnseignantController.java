@@ -14,9 +14,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.aji_t9ra.DAO.EnseignantDAO;
+import com.aji_t9ra.DAO.MatiereDAO;
 import com.aji_t9ra.DAO.UserDAO;
 import com.aji_t9ra.Models.Enseignant;
 import com.aji_t9ra.Models.Etudiant;
+import com.aji_t9ra.Models.Matiere;
 import com.aji_t9ra.Models.User;
 
 /**
@@ -31,7 +33,7 @@ public class EnseignantController extends HttpServlet {
      */
 	private UserDAO userDao = new UserDAO();
 	private EnseignantDAO enseignantDao= new EnseignantDAO();
-	
+	private MatiereDAO matiereDao=new MatiereDAO();
     public EnseignantController() {
         super();
         // TODO Auto-generated constructor stub
@@ -51,11 +53,11 @@ public class EnseignantController extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
    
 		 String op =request.getParameter("op");
-		 if(op.equals("addenseignant")) {
+		 if(op.equals("ChooseMatiere"))
+		 { 
 			 try {
 			   HttpSession session =request.getSession();
 			   User newUser= (User)session.getAttribute("newUser");
-			   int id =userDao.AddUser(newUser);
 			   Enseignant newEnseignant = new Enseignant();
 			   newEnseignant.setNiveau(request.getParameter("niveau"));
 			   newEnseignant.setOrganisme(request.getParameter("organisme"));
@@ -65,6 +67,25 @@ public class EnseignantController extends HttpServlet {
 			   newEnseignant.setEmail(newUser.getEmail());
 			   newEnseignant.setPassword(newUser.getPassword());
 			   newEnseignant.setUsername(newUser.getUsername());
+			   List<Matiere> matieres= matiereDao.getMatiereByNiveau(newEnseignant.getNiveau());			   
+			   session.setAttribute("matieres", matieres);
+			   session.setAttribute("newUser", newUser);
+			   session.setAttribute("newEnseignant", newEnseignant);
+			   response.sendRedirect("EnseignantMatiere.jsp");
+			 }catch (SQLException e) {
+				// TODO: handle exception
+					e.printStackTrace();
+			}
+					  
+		 }
+		 if(op.equals("addenseignant")) {
+			 try {
+			   HttpSession session =request.getSession();
+			   String[] matieres = (String[])request.getParameterValues("matiere[]");
+			   User newUser= (User)session.getAttribute("newUser");
+			   Enseignant newEnseignant = (Enseignant)session.getAttribute("newEnseignant");
+			   newEnseignant.setListMatieres(matieres);
+			   int id =userDao.AddUser(newUser);
 			   newEnseignant.setId(id);
 			   enseignantDao.AddEnseignant(newEnseignant);
 	           response.sendRedirect("login.jsp");
@@ -80,8 +101,21 @@ public class EnseignantController extends HttpServlet {
 
 			 try {
 				List<Enseignant> listNewEnseignants = enseignantDao.getNewEnseignants();
-				request.setAttribute("listNewEnseignants", listNewEnseignants);
-				RequestDispatcher dispatcher = request.getRequestDispatcher("newEnseignants.jsp");
+				request.setAttribute("listEnseignants", listNewEnseignants);
+				RequestDispatcher dispatcher = request.getRequestDispatcher("Enseignants.jsp");
+				dispatcher.forward(request, response);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		 }
+		 if(op.equals("Enseignants"))
+		 {
+
+			 try {
+				List<Enseignant> listNewEnseignants = enseignantDao.getEnseignants();
+				request.setAttribute("listEnseignants", listNewEnseignants);
+				RequestDispatcher dispatcher = request.getRequestDispatcher("Enseignants.jsp");
 				dispatcher.forward(request, response);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block

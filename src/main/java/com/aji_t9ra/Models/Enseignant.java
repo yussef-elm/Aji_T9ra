@@ -1,10 +1,13 @@
 package com.aji_t9ra.Models;
 
+import java.util.List;
+
 public class Enseignant extends User{
    
 	private String description;
 	private String organisme;
 	private String niveau;
+	private String[] listMatieres;
 	
 	
 	public Enseignant() {
@@ -43,4 +46,14 @@ public class Enseignant extends User{
 	public void setOrganisme(String organisme) {
 		this.organisme = organisme;
 	}
+	public String[] getListMatieres() {
+		return listMatieres;
+	}
+	public void setListMatieres(String[] listMatieres) {
+		this.listMatieres = listMatieres;
+	}
+
+
+	
+	
 }

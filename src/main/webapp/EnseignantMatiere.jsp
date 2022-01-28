@@ -1,5 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"%>
+<%@page import="com.aji_t9ra.Models.Matiere"%>
+<%@ taglib prefix='c' uri='http://java.sun.com/jsp/jstl/core'%>
+<%@page import="java.util.*"%>
 
+
+<%
+List<Matiere> matieres = (List<Matiere>) session.getAttribute("matieres");
+%>
 <!doctype html>
 <html class="no-js" lang="zxx">
 <head>
@@ -23,8 +30,6 @@
 <link rel="stylesheet" href="assets/css/slick.css">
 <link rel="stylesheet" href="assets/css/nice-select.css">
 <link rel="stylesheet" href="assets/css/style.css">
-<link rel="stylesheet" href="assets/css/form.css">
-
 </head>
 <!--? Preloader Start -->
 <div id="preloader-active">
@@ -108,66 +113,33 @@
 				<div class="icon d-flex align-items-center justify-content-center">
 					<span class="fa fa-user-o"></span>
 				</div>
-				<h3 class="text-center mb-4">Inscrivez-vous</h3>
-				<form action="User?op=adduser" method="post" id="form" class="form"
+				<h3 class="text-center mb-4">Inscrivez-vous : Compte Enseignant</h3>
+				<form action="Enseignant?op=addenseignant" method="post"
+					onsubmit="return handleData()" class="login-form"
 					style="text-align: center;">
-					<div class="form-group">
-						<input type="radio" id="enseignant" name="role" value="enseignant"
-							style="margin-right: 10px;" checked> <label
-							for="enseignant" style="margin-right: 20px;"> Enseignant
-						</label> <input type="radio" id="etudiant" name="role" value="etudiant"
-							style="margin-left: 20px;"> <label for="etudiant"
-							style="margin-left: 10px;"> Etudiant </label>
-					</div>
-					<div class="form-control">
-						<input type="text" name="nom" id="lastname"
-							 placeholder="Nom" required>
-					    <i class="fas fa-check-circle"></i>
-						<i class="fas fa-exclamation-circle"></i>
-						<small style="font-size: 60%;">Error message</small>
-					</div>
-					<div class="form-control">
-						<input type="text" name="prenom" id="firstname"
-						 placeholder="Prenom" required>
-						<i class="fas fa-check-circle"></i>
-						<i class="fas fa-exclamation-circle"></i>
-						<small style="font-size: 60%;">Error message</small>
-					</div>
-					<div class="form-control">
-						<input type="text" id="username" name="username"
-						 placeholder="User Name"
-							required> 
-							<i class="fas fa-check-circle"></i> 
-							<i class="fas fa-exclamation-circle"></i> 
-							<small style="font-size: 60%;">Error message</small>
-					</div>
-					<div class="form-control">
-						<input type="text" name="email" id="email"
-							 placeholder="Adresse email"
-							required>
-							<i class="fas fa-check-circle"></i>
-				            <i class="fas fa-exclamation-circle"></i>
-			             	<small style="font-size: 60%;">Error message</small>
-					</div>
-					<div class="form-control d-flex">
-						<input type="password" name="password" id="password"
-						    placeholder="Mot de passe"
-							required>
-							<i class="fas fa-check-circle"></i>
-							<i class="fas fa-exclamation-circle"></i>
-							<small style="font-size: 60%;">Error message</small>
-					</div>
-					<div class="form-control d-flex">
-						<input type="password" 
-							name="password" placeholder="Confirmer mot de passe"
-							id="password2" required>
-						<i class="fas fa-check-circle"></i>
-						<i class="fas fa-exclamation-circle"></i>
-						<small style="font-size: 60%;">Error message</small>
+
+
+
+					<div class="p-2">
+					Choisissez votre matiére :
+						<div style="visibility: hidden; color: red;font-size: 12px;" id="chk_option_error">						
+						Choisissez en moins une matiére </div>
+
+						<%
+						for (Matiere e : matieres) {
+						%>
+						<label class="container"><%=e.getNom() %> <input type="checkbox" name="matiere[]" value="<%=e.getNom()%>">
+							<span class="checkmark"></span>
+						</label>
+		
+						<%
+						}
+						%>
+
 					</div>
 					<div class="form-group">
 						<button type="submit" value="sinscrire"
-							class="form-control btn btn-primary rounded submit px-3">Suivant</button>
+							class="form-control btn btn-primary rounded submit px-3">S’inscrire</button>
 					</div>
 				</form>
 			</div>
@@ -235,13 +207,96 @@
 <script src="./assets/js/jquery.validate.min.js"></script>
 <script src="./assets/js/mail-script.js"></script>
 <script src="./assets/js/jquery.ajaxchimp.min.js"></script>
-<script src="./assets/js/form.js"></script>
+<script> 
+function handleData()
+{
+    var form_data = new FormData(document.querySelector("form"));
+    if(!form_data.has("matiere[]"))
+    {
+        document.getElementById("chk_option_error").style.visibility = "visible";
+      return false;      
+    }
+    else
+    {
+        document.getElementById("chk_option_error").style.visibility = "hidden";
+      return true;
+    }
 
+}
+</script>
 
 <!-- Jquery Plugins, main Jquery -->
 <script src="./assets/js/plugins.js"></script>
 <script src="./assets/js/main.js"></script>
+<style>
+.container {
+  display: block;
+  position: relative;
+  padding-left: 35px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 22px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
 
+/* Hide the browser's default checkbox */
+.container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 25px;
+  width: 25px;
+  background-color: #eee;
+}
+
+/* On mouse-over, add a grey background color */
+.container:hover input ~ .checkmark {
+  background-color: #ccc;
+}
+
+/* When the checkbox is checked, add a blue background */
+.container input:checked ~ .checkmark {
+  background-color: #2196F3;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the checkmark when checked */
+.container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the checkmark/indicator */
+.container .checkmark:after {
+  left: 9px;
+  top: 5px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+
+</style>
 </body>
 </html>
 

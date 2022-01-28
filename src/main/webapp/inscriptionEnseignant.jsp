@@ -107,14 +107,14 @@
 					<span class="fa fa-user-o"></span>
 				</div>
 				<h3 class="text-center mb-4">Inscrivez-vous : Compte Enseignant</h3>
-				<form action="Enseignant?op=addenseignant" method="post"
+				<form action="Enseignant?op=ChooseMatiere" method="post"
 					class="login-form" style="text-align: center;">
 					<div class="form-group">
 						<input type="radio"  name="niveau" value="Universitaire" checked> 
 						<label for="Universitaire" > Université </label> 
 						<input type="radio" name="niveau" value="lycée"
-							> <label for="lycée"> Lycée </label>
-						<input type="radio"  name="niveau " value="collège "
+							> <label for="lycee"> Lycée </label>
+						<input type="radio"  name="niveau " value="college "
 							> <label for="collège "> Collège  </label>
 					</div>
 					<div class="form-group">
@@ -130,7 +130,7 @@
 
 					<div class="form-group">
 						<button type="submit" value="sinscrire"
-							class="form-control btn btn-primary rounded submit px-3">S’inscrire</button>
+							class="form-control btn btn-primary rounded submit px-3">Suivant</button>
 					</div>
 				</form>
 			</div>

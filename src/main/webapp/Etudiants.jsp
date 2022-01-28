@@ -2,7 +2,7 @@
 
 <%@page import="java.util.*"%>
 <%@page import="com.aji_t9ra.Models.User"%>
-<%@page import="com.aji_t9ra.Models.Enseignant"%>
+<%@page import="com.aji_t9ra.Models.Etudiant"%>
 <%@ taglib prefix='c' uri='http://java.sun.com/jsp/jstl/core'%>
 
 
@@ -20,7 +20,7 @@ if (user.isAdmin() == false) {
 
 <%
 // get the students from the request object (sent by servlet)
-List<Enseignant> listNewEnseignants = (List<Enseignant>) request.getAttribute("listNewEnseignants");
+List<Etudiant> listEtudiants = (List<Etudiant>) request.getAttribute("listEtudiants");
 %>
 
 
@@ -117,10 +117,14 @@ List<Enseignant> listNewEnseignants = (List<Enseignant>) request.getAttribute("l
 									<ul id="navigation">
 										<li><a href="index.jsp">Accueil</a></li>
 										<c:if test="${user.isAdmin() == true}">
+                                            <li><a href="Enseignant?op=Enseignants">Nos
+													Enseignants</a></li>
+											<li><a href="Etudiant?op=Etudiants">Nos Etudiants</a></li>
 											<li><a href="Enseignant?op=newEnseignants">Nouveaux
 													Enseignants</a></li>
 											<li><a href="Etudiant?op=newEtudiants">Nouveaux
 													Etudiants</a></li>
+											<li><a href="User?op=ComptesDesactiver">Comptes Desactivés</a></li>
 										</c:if>
 									</ul>
 								</nav>
@@ -147,30 +151,27 @@ List<Enseignant> listNewEnseignants = (List<Enseignant>) request.getAttribute("l
 				<div class="row">
 
 					<%
-					for (Enseignant e : listNewEnseignants) {
+					for (Etudiant e : listEtudiants) {
 					%>
 					<div class="col-lg-3 col-md-6 col-sm-6">
 						<div class="single-team mb-30">
 							<div class="team-img">
-								<img src="assets/img/elements/prof.jpg" alt=""
-									style="width: 140px; height: 140px; display: block; margin-left: auto; margin-right: auto;">
+								<img src="assets/img/elements/etu.png" alt=""
+									style="width: 70px; height: 90px; display: block; margin-left: auto; margin-right: auto;">
 							</div>
 							<div class="team-caption">
 								<h3>
 									<a href="profile.jsp"><%=e.getNom()%> <%=" "%><%=e.getPrenom()%></a>
 								</h3>
-								<p><%=e.getOrganisme()%></p>
-								<a href="Enseignant?op=profile&id=<%=e.getId()%>" type="button"
-									class="btn btn-info">Profile</a>
+								<p><%=e.getEcole()%></p>
+								<a href="Etudiant?op=profile&id=<%=e.getId()%>" type="button"
+									class="btn btn-info " >Profile</a>
 							</div>
 						</div>
 					</div>
-
 					<%
 					}
 					%>
-
-
 				</div>
 			</div>
 		</div>

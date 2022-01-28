@@ -1,6 +1,8 @@
 package com.aji_t9ra.Controllers;
 
 import java.io.IOException;
+import java.sql.SQLException;
+import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -10,7 +12,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.aji_t9ra.DAO.EnseignantDAO;
+import com.aji_t9ra.DAO.EtudiantDAO;
 import com.aji_t9ra.DAO.UserDAO;
+import com.aji_t9ra.Models.Etudiant;
+import com.aji_t9ra.Models.Enseignant;
 import com.aji_t9ra.Models.User;
 
 /**
@@ -20,6 +26,8 @@ import com.aji_t9ra.Models.User;
 public class UserController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
     private UserDAO userDAO=new UserDAO();
+    private EnseignantDAO enseignantDao= new EnseignantDAO();
+    private EtudiantDAO etudiantDao=new EtudiantDAO();
 
     /**
      * @see HttpServlet#HttpServlet()
@@ -73,6 +81,21 @@ public class UserController extends HttpServlet {
 
 			}
 			//userDAO.AddUSer(newUser);
+		}
+		
+		if(op.equals("ComptesDesactiver")) {
+			
+			try {
+				List<Etudiant> listEtudiants = etudiantDao.getDescativeEtudiants();
+				List<Enseignant> listEnseignants = enseignantDao.getDesactiveEnseignants();
+ 				request.setAttribute("listEtudiants", listEtudiants);
+ 				request.setAttribute("listEnseignants", listEnseignants);
+				RequestDispatcher dispatcher = request.getRequestDispatcher("Users.jsp");
+				dispatcher.forward(request, response);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 	}
