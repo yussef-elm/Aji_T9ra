@@ -28,7 +28,6 @@ int DUsers = (int) request.getAttribute("DUsers");
 List<String> categories = (List<String>) request.getAttribute("categories");
 String niveau = (String) request.getAttribute("niveau");
 String categorie = (String) request.getAttribute("categorie");
-boolean MesMatieres = (boolean) request.getAttribute("MesMatieres");
 List<Matiere> listMatieres = (List<Matiere>) request.getAttribute("listMatieres");
 %>
 
@@ -327,6 +326,7 @@ session.setAttribute("nosEnseignant", request.getAttribute("nosEnseignant"));
 								%>
 								<%
 								if (user.getRole().equals("enseignant")) {
+									boolean MesMatieres = (boolean) request.getAttribute("MesMatieres");
 									if (MesMatieres) {
 								%>
 								<a
