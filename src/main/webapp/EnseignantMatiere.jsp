@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@page import="com.aji_t9ra.Models.Matiere"%>
 <%@ taglib prefix='c' uri='http://java.sun.com/jsp/jstl/core'%>
 <%@page import="java.util.*"%>
@@ -80,7 +80,7 @@ List<Matiere> matieres = (List<Matiere>) session.getAttribute("matieres");
 					<!-- Logo -->
 					<div class="logo logo2 d-block d-lg-none"
 						style="background-color: white; height: 40px; width: 50px; text-align: center;">
-						<a href="index.html"><img src="assets/img/logo/logo1.png"
+						<a href="index.jsp"><img src="assets/img/logo/logo1.png"
 							alt=""></a>
 					</div>
 					<!-- Main-menu -->

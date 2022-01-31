@@ -14,6 +14,8 @@ import javax.servlet.http.HttpSession;
 
 import com.aji_t9ra.DAO.EnseignantDAO;
 import com.aji_t9ra.DAO.EtudiantDAO;
+import com.aji_t9ra.DAO.LoginDAO;
+import com.aji_t9ra.DAO.MatiereDAO;
 import com.aji_t9ra.DAO.UserDAO;
 import com.aji_t9ra.Models.Etudiant;
 import com.aji_t9ra.Models.Enseignant;
@@ -28,6 +30,8 @@ public class UserController extends HttpServlet {
     private UserDAO userDao=new UserDAO();
     private EnseignantDAO enseignantDao= new EnseignantDAO();
     private EtudiantDAO etudiantDao=new EtudiantDAO();
+    private MatiereDAO matiereDao=new MatiereDAO();
+    private LoginDAO loginDao = new LoginDAO();
 
     /**
      * @see HttpServlet#HttpServlet()
@@ -82,7 +86,42 @@ public class UserController extends HttpServlet {
 			}
 			//userDAO.AddUSer(newUser);
 		}
-		
+		 if(op.equals("profile"))
+		 {
+
+			 try {
+				int id =Integer.parseInt(request.getParameter("id"));
+				if(loginDao.isEtudiant(id))
+				{ 
+					Etudiant etudiant = etudiantDao.getEtudiantByID(id);
+					request= Counts(request);
+					request.setAttribute("profile", "etudiant");
+					request.setAttribute("etudiant", etudiant);
+					RequestDispatcher dispatcher = request.getRequestDispatcher("profile.jsp");
+					dispatcher.forward(request, response);
+				}
+				else if(loginDao.isEnseignant(id)) {   
+					Enseignant enseignant =enseignantDao.getEnseignantByID(id);
+					request= Counts(request);
+					request.setAttribute("profile", "enseignant");
+					request.setAttribute("enseignant", enseignant);
+					RequestDispatcher dispatcher = request.getRequestDispatcher("profile.jsp");
+					dispatcher.forward(request, response);		
+				}else {
+					User user = userDao.getUserById(id);
+					request= Counts(request);
+					request.setAttribute("profile", "admin");
+					request.setAttribute("admin", user);
+					RequestDispatcher dispatcher = request.getRequestDispatcher("profile.jsp");
+					dispatcher.forward(request, response);
+					
+				}
+				
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		 }
 		if(op.equals("ComptesDesactiver")) {
 			
 			try {
@@ -103,6 +142,11 @@ public class UserController extends HttpServlet {
 
 	public HttpServletRequest Counts(HttpServletRequest request) throws SQLException
 	{
+		
+		List<String> categories=matiereDao.getCategories();
+		List<String> niveaux=matiereDao.getNiveaux();
+		request.setAttribute("niveaux", niveaux);
+		request.setAttribute("categories", categories);
 		int nbrEn = enseignantDao.nombreNosEnseignant();
 		int nbrNewEn=enseignantDao.nombreNouveauEnseignant();
 		int nbrDEns=enseignantDao.nombreDesacEnseignant();

@@ -1,10 +1,12 @@
-
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 
 <%@page import="java.util.*"%>
 <%@page import="com.aji_t9ra.Models.*"%>
 <%@page import="com.aji_t9ra.DAO.*"%>
+
+
+
 <%@ taglib prefix='c' uri='http://java.sun.com/jsp/jstl/core'%>
 
 
@@ -14,29 +16,23 @@ if (user == null) {
 	response.sendRedirect("login.jsp");
 	return;
 }
-if (user.isAdmin() == false) {
-	response.sendRedirect("index.jsp");
-	return;
-}
+%>
+<%
+int nosEnseignant = (int) session.getAttribute("nosEnseignant");
+int newEnseignant = (int) session.getAttribute("newEnseignant");
+int DEnseignant = (int) session.getAttribute("DEnseignant");
+int nosEtudiant = (int) session.getAttribute("nosEtudiant");
+int newEtudiant = (int) session.getAttribute("newEtudiant");
+int DEtudiant = (int) session.getAttribute("DEtudiant");
+int DUsers = (int) session.getAttribute("DUsers");
 %>
 
 <%
-int nosEnseignant = (int) request.getAttribute("nosEnseignant");
-int newEnseignant = (int) request.getAttribute("newEnseignant");
-int DEnseignant = (int) request.getAttribute("DEnseignant");
-int nosEtudiant = (int) request.getAttribute("nosEtudiant");
-int newEtudiant = (int) request.getAttribute("newEtudiant");
-int DEtudiant = (int) request.getAttribute("DEtudiant");
-int DUsers = (int) request.getAttribute("DUsers");
-%>
-<%
-// get the students from the request object (sent by servlet)
+final UserDAO userDao = new UserDAO();
+
 List<String> categories = (List<String>) request.getAttribute("categories");
-List<Etudiant> listEtudiants = (List<Etudiant>) request.getAttribute("listEtudiants");
+String p = (String) request.getParameter("profile");
 %>
-
-
-
 <!doctype html>
 <html class="no-js" lang="zxx">
 <head>
@@ -63,6 +59,8 @@ List<Etudiant> listEtudiants = (List<Etudiant>) request.getAttribute("listEtudia
 <link rel="stylesheet" href="assets/css/nice-select.css">
 <link rel="stylesheet" href="assets/css/style.css">
 <link rel="stylesheet" href="assets/css/navbar.css">
+<link rel="stylesheet" href="assets/css/scroll.css">
+
 
 </head>
 <body>
@@ -217,39 +215,117 @@ List<Etudiant> listEtudiants = (List<Etudiant>) request.getAttribute("listEtudia
 
 	<main
 		style="background-image: url('./assets/img/blog/back1.jpg'); background-size: cover;">
+		<%
+		if (p.equals("Enseignant")) {
+			final EnseignantDAO enseignantDao = new EnseignantDAO();
+			int id = Integer.parseInt(request.getParameter("id"));
+			Enseignant enseignant = enseignantDao.getEnseignantByID(id);
+		%>
+		</br> </br>
+		<div class="container">
+			<div class="">
+				<div class="card" style="border: solid;">
+					<div class="card-body text-center">
+						<c:if test="${enseignant.isApproved()==true}">
+							<img class="avatar rounded-circle"
+								style="max-width: 2rem; margin-top: -2rem"
+								src="assets/img/elements/certif.png" alt="certif">
+						</c:if>
+						<img class="avatar rounded-circle" style="border: solid;"
+							src="assets/img/elements/prof.jpg" alt="">
+						<c:if test="${enseignant.isActive()==true}">
+							<img class="avatar rounded-circle"
+								style="max-width: 2rem; margin-top: -2rem"
+								src="assets/img/elements/act.png" alt="">
+						</c:if>
+						<h4 class="card-title"><%=enseignant.getNom()%><%=" "%><%=enseignant.getPrenom()%></h4>
+						<h6 class="card-subtitle mb-2 text-muted">
+							<%=enseignant.getOrganisme() + " (" + enseignant.getNiveau() + ")"%>
+						</h6>
+						<h6 class="card-subtitle mb-2 text-muted">
+							<%=enseignant.getEmail()%></h6>
+						<c:if test="${enseignant.getListMatieres() !=null }">
+							<h6>
+								Matiéres :<%
+							for (Matiere m : enseignant.getListMatieres()) {
+							%><%=m.getNom() + "/"%>
+								<%
+								}
+								%>
+							</h6>
+						</c:if>
+						<div class="row justify-content-center">
+							<div class="col-md-8 col-lg-8">
+								<div class="login-wrap p-4 p-md-5" style="margin-top: -50px;">
+									<form
+										action="Enseignant?op=modifier&id=<%=enseignant.getId()%>"
+										method="post" class="login-form" style="text-align: center;">
+										<textarea class="form-control rounded-left" rows="5"
+											id="description" name="description"><%=enseignant.getDescription()%></textarea>
 
-		<!-- Hero End -->
-		<div class="team-area ">
-			<div class="container">
-				<div class="row" style="column-gap: 20px;">
-
-					<%
-					for (Etudiant e : listEtudiants) {
-					%>
-					<div class="col-lg-3 col-md-6 col-sm-6"
-						style="background-color: white; padding-top: 25px; border: solid; box-shadow: 5px 5px 5px 5px;">
-						<div class="single-team mb-30">
-							<div class="team-img">
-								<img src="assets/img/elements/etu.png" alt=""
-									style="width: 70px; height: 90px; display: block; margin-left: auto; margin-right: auto;">
-							</div>
-							<div class="team-caption">
-								<h3>
-									<a href="profile.jsp"><%=e.getNom()%> <%=" "%><%=e.getPrenom()%></a>
-								</h3>
-								<p><%=e.getEcole()%></p>
-								<a href="Etudiant?op=profile&id=<%=e.getId()%>" type="button"
-									class="btn btn-info ">Profile</a>
+										<button type="submit" class="btn btn-info btn-danger"
+											style="background: #87CEEB; padding: 25px 30px; margin-top: 10px;">Modifier</button>
+									</form>
+								</div>
 							</div>
 						</div>
 					</div>
-					<%
-					}
-					%>
 				</div>
 			</div>
 		</div>
 		</br> </br>
+		<%
+		} else {
+		final EtudiantDAO etudiantDao = new EtudiantDAO();
+		int id = Integer.parseInt(request.getParameter("id"));
+		Etudiant etudiant = etudiantDao.getEtudiantByID(2);
+		%>
+		</br> </br>
+		<div class="container">
+			<div class="">
+				<div class="card" style="border: solid;">
+					<div class="card-body text-center">
+						<c:if test="${etudiant.isApproved()==true}">
+							<img class="avatar rounded-circle"
+								style="max-width: 2rem; margin-top: -2rem"
+								src="assets/img/elements/certif.png" alt="certif">
+						</c:if>
+						<img class="avatar rounded-circle" style="border: solid;"
+							src="assets/img/elements/etup.png" alt="">
+						<c:if test="${etudiant.isActive()==true}">
+							<img class="avatar rounded-circle"
+								style="max-width: 2rem; margin-top: -2rem"
+								src="assets/img/elements/act.png" alt="">
+						</c:if>
+						<h4 class="card-title"><%=etudiant.getNom()%><%=" "%><%=etudiant.getPrenom()%></h4>
+						<h6 class="card-subtitle mb-2 text-muted">
+							<%=etudiant.getEcole() + " (" + etudiant.getNiveau_scolaire() + ")"%>
+						</h6>
+						<h6 class="card-subtitle mb-2 text-muted">
+							<%=etudiant.getEmail()%></h6>
+						<div class="row justify-content-center">
+							<div class="col-md-8 col-lg-8">
+								<div class="login-wrap p-4 p-md-5" style="margin-top: -50px;">
+									<form action="Etudiant?op=modifier&id=<%=etudiant.getId()%>"
+										method="post" class="login-form" style="text-align: center;">
+										<textarea class="form-control rounded-left" rows="5"
+											id="description" name="description"><%=etudiant.getDescription()%></textarea>
+
+										<button type="submit" class="btn btn-info btn-danger"
+											style="background: #87CEEB; padding: 25px 30px; margin-top: 10px;">Modifier</button>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		</br> </br>
+		<%
+		}
+		%>
 
 	</main>
 
@@ -324,5 +400,17 @@ List<Etudiant> listEtudiants = (List<Etudiant>) request.getAttribute("listEtudia
 	<!-- Jquery Plugins, main Jquery -->
 	<script src="./assets/js/plugins.js"></script>
 	<script src="./assets/js/main.js"></script>
+	<style>
+body {
+	padding: 2rem 0rem;
+}
+
+.avatar {
+	border: 0.3rem solid rgba(#fff, 0.3);
+	margin-top: -6rem;
+	margin-bottom: 1rem;
+	max-width: 9rem;
+}
+</style>
 </body>
 </html>

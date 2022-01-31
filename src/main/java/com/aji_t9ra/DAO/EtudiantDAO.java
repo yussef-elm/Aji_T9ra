@@ -175,7 +175,15 @@ public class EtudiantDAO extends AbstractDAO {
 		ps1.executeUpdate();
 
 	}
+	public void UpdateDescriptionEtudiant(int id, String description) throws SQLException {
+		String query = "update  etudiant set Description=? where id=?";
 
+		PreparedStatement ps = this.getPrepareStatement(query);
+		ps.setString(1, description);
+		ps.setInt(2, id);
+		ps.executeUpdate();
+
+	}
 	public void desactiverEtudiant(int id) throws SQLException {
 		String query = "update  user set isActive=? where id=?";
 		String query1 = "update  etudiant set isActive=? where id=?";

@@ -2,6 +2,7 @@ package com.aji_t9ra.Controllers;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -14,6 +15,7 @@ import com.aji_t9ra.Models.User;
 import com.aji_t9ra.DAO.EnseignantDAO;
 import com.aji_t9ra.DAO.EtudiantDAO;
 import com.aji_t9ra.DAO.LoginDAO;
+import com.aji_t9ra.DAO.MatiereDAO;
 import com.aji_t9ra.DAO.UserDAO;
 
 /**
@@ -27,6 +29,7 @@ public class LoginController extends HttpServlet {
     private EnseignantDAO enseignantDao =new EnseignantDAO();
     private EtudiantDAO etudiantDao=new EtudiantDAO();
     private UserDAO userDao=new UserDAO();
+    private MatiereDAO matiereDao = new MatiereDAO();
     public LoginController() {
         super();
         // TODO Auto-generated constructor stub
@@ -65,6 +68,10 @@ public class LoginController extends HttpServlet {
 
 	public HttpSession Counts(HttpSession session) throws SQLException
 	{
+		List<String> categories=matiereDao.getCategories();
+		List<String> niveaux=matiereDao.getNiveaux();
+		session.setAttribute("niveaux", niveaux);
+		session.setAttribute("categories", categories);
 		int nbrEn = enseignantDao.nombreNosEnseignant();
 		int nbrNewEn=enseignantDao.nombreNouveauEnseignant();
 		int nbrDEns=enseignantDao.nombreDesacEnseignant();

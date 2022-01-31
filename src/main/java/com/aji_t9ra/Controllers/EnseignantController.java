@@ -143,6 +143,115 @@ public class EnseignantController extends HttpServlet {
 				e.printStackTrace();
 			}
 		 }
+		 if(op.equals("modifier"))
+		 {
+
+			 try {
+				request.setCharacterEncoding("UTF-8");
+				int id =Integer.parseInt(request.getParameter("id"));
+				String description = (String)request.getParameter("description");
+				enseignantDao.UpdateDescriptionEnseignant(id, description);
+				Enseignant enseignant = enseignantDao.getEnseignantByID(id);
+				request= Counts(request);
+				request.setAttribute("profile", "enseignant");
+				request.setAttribute("enseignant", enseignant);
+				RequestDispatcher dispatcher = request.getRequestDispatcher("profile.jsp");
+				dispatcher.forward(request, response);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		 }
+		 if(op.equals("mesMatieres"))
+		 {
+
+			 try {
+				request.setCharacterEncoding("UTF-8");
+				int id =Integer.parseInt(request.getParameter("id"));
+				Enseignant e = enseignantDao.getEnseignantByID(id);
+				List<Matiere> listMatieres=matiereDao.getMatiereEnseignant(id,e.getNiveau());
+				request.setAttribute("listMatieres", listMatieres);
+				request = Counts(request);
+	            request.setAttribute("MesMatieres", true);
+				request.setAttribute("niveau",e.getNiveau() );
+				RequestDispatcher dispatcher = request.getRequestDispatcher("Matiere.jsp");
+				dispatcher.forward(request, response);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		 }
+		 if(op.equals("MatieresDispo"))
+		 {
+			 try {
+				request.setCharacterEncoding("UTF-8");
+				int id =Integer.parseInt(request.getParameter("id"));
+				String categorie = request.getParameter("categorie");
+				Enseignant e = enseignantDao.getEnseignantByID(id);
+				List<Matiere> listMatieres=null;
+	            if(categorie ==null) {
+				listMatieres=matiereDao.getMatiereDisponibleByEnseignant(e);
+	            }else {
+				listMatieres=matiereDao.getMatiereDisponibleByEnseignantAndCategorie(e,categorie);	
+	            }
+	            request.setAttribute("MesMatieres", false);
+				request.setAttribute("listMatieres", listMatieres);
+				request = Counts(request);
+				request.setAttribute("niveau",e.getNiveau() );
+				RequestDispatcher dispatcher = request.getRequestDispatcher("Matiere.jsp");
+				dispatcher.forward(request, response);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		 }
+		 if(op.equals("MatiereUnavailable"))
+		 {
+			 try {
+				request.setCharacterEncoding("UTF-8");
+				int idMatiere =Integer.parseInt(request.getParameter("idMatiere"));
+				int idEnseignant =Integer.parseInt(request.getParameter("idEnseignant"));
+				Enseignant e = enseignantDao.getEnseignantByID(idEnseignant);
+				Matiere m=matiereDao.getMatiereById(idMatiere);
+				matiereDao.DeleteMatiereEnseignant(idMatiere, idEnseignant);
+				List<Matiere> listMatieres=matiereDao.getMatiereEnseignant(idEnseignant,e.getNiveau());
+				request.setAttribute("listMatieres", listMatieres);
+				request = Counts(request);
+	            request.setAttribute("MesMatieres", true);
+				request.setAttribute("niveau",e.getNiveau() );
+				RequestDispatcher dispatcher = request.getRequestDispatcher("Matiere.jsp");
+				dispatcher.forward(request, response);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		 }
+		 if(op.equals("MatiereAvailable"))
+		 {
+			 try {
+				request.setCharacterEncoding("UTF-8");
+				int idMatiere =Integer.parseInt(request.getParameter("idMatiere"));
+				int idEnseignant =Integer.parseInt(request.getParameter("idEnseignant"));
+				Enseignant e = enseignantDao.getEnseignantByID(idEnseignant);
+				Matiere m=matiereDao.getMatiereById(idMatiere);
+				matiereDao.AddMatiereEnseignant(idMatiere, idEnseignant);
+				List<Matiere> listMatieres=null;
+	            if(!e.getNiveau().equals("Universitaire")) {
+				listMatieres=matiereDao.getMatiereDisponibleByEnseignant(e);
+	            }else {
+				listMatieres=matiereDao.getMatiereDisponibleByEnseignantAndCategorie(e,m.getCategorie());	
+	            }
+	            request.setAttribute("MesMatieres", false);
+				request.setAttribute("listMatieres", listMatieres);
+				request = Counts(request);
+				request.setAttribute("niveau",e.getNiveau() );
+				RequestDispatcher dispatcher = request.getRequestDispatcher("Matiere.jsp");
+				dispatcher.forward(request, response);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		 } 
 		 if(op.equals("approver"))
 		 {
 
@@ -208,6 +317,10 @@ public class EnseignantController extends HttpServlet {
 	
 	public HttpServletRequest Counts(HttpServletRequest request) throws SQLException
 	{
+		List<String> categories=matiereDao.getCategories();
+		List<String> niveaux=matiereDao.getNiveaux();
+		request.setAttribute("niveaux", niveaux);
+		request.setAttribute("categories", categories);
 		int nbrEn = enseignantDao.nombreNosEnseignant();
 		int nbrNewEn=enseignantDao.nombreNouveauEnseignant();
 		int nbrDEns=enseignantDao.nombreDesacEnseignant();

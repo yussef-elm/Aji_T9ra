@@ -1,12 +1,10 @@
-
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 
 <%@page import="java.util.*"%>
 <%@page import="com.aji_t9ra.Models.*"%>
-<%@page import="com.aji_t9ra.DAO.*"%>
+<%@page import="com.aji_t9ra.DAO.*" %>
 <%@ taglib prefix='c' uri='http://java.sun.com/jsp/jstl/core'%>
-
 
 <%
 User user = (User) session.getAttribute("user");
@@ -14,28 +12,23 @@ if (user == null) {
 	response.sendRedirect("login.jsp");
 	return;
 }
-if (user.isAdmin() == false) {
-	response.sendRedirect("index.jsp");
-	return;
-}
-%>
-
-<%
-int nosEnseignant = (int) request.getAttribute("nosEnseignant");
-int newEnseignant = (int) request.getAttribute("newEnseignant");
-int DEnseignant = (int) request.getAttribute("DEnseignant");
-int nosEtudiant = (int) request.getAttribute("nosEtudiant");
-int newEtudiant = (int) request.getAttribute("newEtudiant");
-int DEtudiant = (int) request.getAttribute("DEtudiant");
-int DUsers = (int) request.getAttribute("DUsers");
 %>
 <%
-// get the students from the request object (sent by servlet)
-List<String> categories = (List<String>) request.getAttribute("categories");
-List<Etudiant> listEtudiants = (List<Etudiant>) request.getAttribute("listEtudiants");
+int nosEnseignant = (int) session.getAttribute("nosEnseignant");
+int newEnseignant = (int) session.getAttribute("newEnseignant");
+int DEnseignant = (int) session.getAttribute("DEnseignant");
+int nosEtudiant = (int) session.getAttribute("nosEtudiant");
+int newEtudiant = (int) session.getAttribute("newEtudiant");
+int DEtudiant = (int) session.getAttribute("DEtudiant");
+int DUsers = (int) session.getAttribute("DUsers");
+List<String> categories = (List<String>) session.getAttribute("categories");
+List<String> niveaux = (List<String>) session.getAttribute("niveaux");
 %>
 
 
+<%
+
+%>
 
 <!doctype html>
 <html class="no-js" lang="zxx">
@@ -63,6 +56,9 @@ List<Etudiant> listEtudiants = (List<Etudiant>) request.getAttribute("listEtudia
 <link rel="stylesheet" href="assets/css/nice-select.css">
 <link rel="stylesheet" href="assets/css/style.css">
 <link rel="stylesheet" href="assets/css/navbar.css">
+<link rel="stylesheet" href="assets/css/scroll.css">
+
+
 
 </head>
 <body>
@@ -117,10 +113,8 @@ List<Etudiant> listEtudiants = (List<Etudiant>) request.getAttribute("listEtudia
 					<div class="container">
 						<div class="menu-wrapper">
 
-							<!-- Main-menu -->
 							<div class="main-menu d-none d-lg-block">
 								<nav>
-
 									<ul class=" navigation navbar-links">
 										<li class="navbar-dropdown"><a style="padding-top: 30px;"
 											href="index.jsp"><img src="assets/img/logo/logo1.png"></a></li>
@@ -198,6 +192,7 @@ List<Etudiant> listEtudiants = (List<Etudiant>) request.getAttribute("listEtudia
 											}
 											%>
 										</c:if>
+
 									</ul>
 								</nav>
 							</div>
@@ -214,42 +209,57 @@ List<Etudiant> listEtudiants = (List<Etudiant>) request.getAttribute("listEtudia
 		</div>
 		<!-- Header End -->
 	</header>
-
 	<main
 		style="background-image: url('./assets/img/blog/back1.jpg'); background-size: cover;">
-
-		<!-- Hero End -->
-		<div class="team-area ">
-			<div class="container">
-				<div class="row" style="column-gap: 20px;">
-
-					<%
-					for (Etudiant e : listEtudiants) {
-					%>
-					<div class="col-lg-3 col-md-6 col-sm-6"
-						style="background-color: white; padding-top: 25px; border: solid; box-shadow: 5px 5px 5px 5px;">
-						<div class="single-team mb-30">
-							<div class="team-img">
-								<img src="assets/img/elements/etu.png" alt=""
-									style="width: 70px; height: 90px; display: block; margin-left: auto; margin-right: auto;">
-							</div>
-							<div class="team-caption">
-								<h3>
-									<a href="profile.jsp"><%=e.getNom()%> <%=" "%><%=e.getPrenom()%></a>
-								</h3>
-								<p><%=e.getEcole()%></p>
-								<a href="Etudiant?op=profile&id=<%=e.getId()%>" type="button"
-									class="btn btn-info ">Profile</a>
-							</div>
+		<div class="row justify-content-center">
+			<div class="col-md-6 col-lg-8">
+				<div class=""
+					style="margin-top: 40px; padding: 0px 140px; padding-bottom: 80px;">
+					<h3 class="text-center mb-4">Ajouter Une Nouvelle Matiére</h3>
+					<form action="Matiere?op=ajouterMatiere" method="post"
+						class="login-form" style="text-align: center;">
+						<div class="form-group">
+							<%
+							for (String n : niveaux) {
+							%>
+							<input type="radio" name="niveau" value="<%=n%>" required>
+							<label style="padding: 0 10px;" for="<%=n%>"> <%=n%>
+							</label>
+							<%
+							}
+							%>
 						</div>
-					</div>
-					<%
-					}
-					%>
+						<div class="form-group">
+							<input type="text" name="Matiere" id="matiere"
+								class="form-control rounded-left" placeholder="Matiére" required>
+						</div>
+						<div class="form-group">
+							<%
+							for (String c : categories) {
+							%>
+							<input type="radio" name="categorie" value="<%=c%>" required>
+							<label style="padding: 0 10px; font-family:" for="<%=c%>">
+								<%=c%>
+							</label>
+							<%
+							}
+							%>
+						</div>
+						<div class="form-group">
+							<textarea name="description" id="description"
+								class="form-control rounded-left" placeholder="Description"
+								rows="4" required></textarea>
+						</div>
+
+						<div class="form-group"
+							style="font-size: 50%; text-align: center;">
+							<button type="submit" value="sinscrire"
+								class="form-control btn btn-primary rounded submit px-3">Ajouter</button>
+						</div>
+					</form>
 				</div>
 			</div>
 		</div>
-		</br> </br>
 
 	</main>
 

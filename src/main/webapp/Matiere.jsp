@@ -1,12 +1,10 @@
-
+<%@page import="com.aji_t9ra.DAO.EnseignantDAO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 
 <%@page import="java.util.*"%>
 <%@page import="com.aji_t9ra.Models.*"%>
-<%@page import="com.aji_t9ra.DAO.*"%>
 <%@ taglib prefix='c' uri='http://java.sun.com/jsp/jstl/core'%>
-
 
 <%
 User user = (User) session.getAttribute("user");
@@ -14,12 +12,7 @@ if (user == null) {
 	response.sendRedirect("login.jsp");
 	return;
 }
-if (user.isAdmin() == false) {
-	response.sendRedirect("index.jsp");
-	return;
-}
 %>
-
 <%
 int nosEnseignant = (int) request.getAttribute("nosEnseignant");
 int newEnseignant = (int) request.getAttribute("newEnseignant");
@@ -29,13 +22,26 @@ int newEtudiant = (int) request.getAttribute("newEtudiant");
 int DEtudiant = (int) request.getAttribute("DEtudiant");
 int DUsers = (int) request.getAttribute("DUsers");
 %>
+
+
 <%
-// get the students from the request object (sent by servlet)
 List<String> categories = (List<String>) request.getAttribute("categories");
-List<Etudiant> listEtudiants = (List<Etudiant>) request.getAttribute("listEtudiants");
+String niveau = (String) request.getAttribute("niveau");
+String categorie = (String) request.getAttribute("categorie");
+boolean MesMatieres = (boolean) request.getAttribute("MesMatieres");
+List<Matiere> listMatieres = (List<Matiere>) request.getAttribute("listMatieres");
 %>
 
-
+<%
+session.setAttribute("categories", request.getAttribute("categories"));
+session.setAttribute("DUsers", request.getAttribute("DUsers"));
+session.setAttribute("DEtudiant", request.getAttribute("DEtudiant"));
+session.setAttribute("newEtudiant", request.getAttribute("newEtudiant"));
+session.setAttribute("nosEtudiant", request.getAttribute("nosEtudiant"));
+session.setAttribute("DEnseignant", request.getAttribute("DEnseignant"));
+session.setAttribute("newEnseignant", request.getAttribute("newEnseignant"));
+session.setAttribute("nosEnseignant", request.getAttribute("nosEnseignant"));
+%>
 
 <!doctype html>
 <html class="no-js" lang="zxx">
@@ -63,6 +69,9 @@ List<Etudiant> listEtudiants = (List<Etudiant>) request.getAttribute("listEtudia
 <link rel="stylesheet" href="assets/css/nice-select.css">
 <link rel="stylesheet" href="assets/css/style.css">
 <link rel="stylesheet" href="assets/css/navbar.css">
+<link rel="stylesheet" href="assets/css/scroll.css">
+
+
 
 </head>
 <body>
@@ -117,10 +126,8 @@ List<Etudiant> listEtudiants = (List<Etudiant>) request.getAttribute("listEtudia
 					<div class="container">
 						<div class="menu-wrapper">
 
-							<!-- Main-menu -->
 							<div class="main-menu d-none d-lg-block">
 								<nav>
-
 									<ul class=" navigation navbar-links">
 										<li class="navbar-dropdown"><a style="padding-top: 30px;"
 											href="index.jsp"><img src="assets/img/logo/logo1.png"></a></li>
@@ -215,31 +222,133 @@ List<Etudiant> listEtudiants = (List<Etudiant>) request.getAttribute("listEtudia
 		<!-- Header End -->
 	</header>
 
-	<main
-		style="background-image: url('./assets/img/blog/back1.jpg'); background-size: cover;">
+	<main>
+		<!--? Categories Area Start -->
+		<div class="categories-area section-padding15"
+			style="background-image: url('./assets/img/blog/back1.jpg'); background-size: cover;">
+			<%
+			if (user.isAdmin()) {
+			%>
+			<div class="row">
+				<div class="col-lg-2">
+					<div class=" text-center mt-60 " style="margin-left: 150px;">
+						<a href="Matiere?niveau=<%=niveau%>&categorie=<%=categorie%>"
+							class="btn btn-danger btn-sm"
+							style="padding: 20px 20px; font-size: 12px; background: green; border-radius: 50px;">
+							Matiére Disponible</a>
+					</div>
+				</div>
+				<div class="col-lg-8">
+					<div class="browse-btn2 text-center mt-30">
+						<a href="AjouterMatiere.jsp" class="btn">Ajouter une nouvelle
+							matiére</a>
+					</div>
+				</div>
+				<div class="col-lg-2">
+					<div class=" text-center mt-60 " style="margin-left: -300px;">
+						<a
+							href="Matiere?niveau=<%=niveau%>&categorie=<%=categorie%>&etat=indisponible"
+							class="btn btn-danger btn-sm"
+							style="padding: 20px 20px; font-size: 12px; background: #c70e0e; border-radius: 50px;">
+							Matiére Indisponible <i class="flaticon-communication"></i>
+						</a>
+					</div>
+				</div>
+			</div>
+			<%
+			}
+			%>
 
-		<!-- Hero End -->
-		<div class="team-area ">
+			</br>
 			<div class="container">
-				<div class="row" style="column-gap: 20px;">
 
+				<div class="row">
 					<%
-					for (Etudiant e : listEtudiants) {
+					for (Matiere m : listMatieres) {
 					%>
-					<div class="col-lg-3 col-md-6 col-sm-6"
-						style="background-color: white; padding-top: 25px; border: solid; box-shadow: 5px 5px 5px 5px;">
-						<div class="single-team mb-30">
-							<div class="team-img">
-								<img src="assets/img/elements/etu.png" alt=""
-									style="width: 70px; height: 90px; display: block; margin-left: auto; margin-right: auto;">
+					<div class="col-lg-4 col-md-6 col-sm-6">
+						<div class="single-cat mb-50 ">
+							<div class="cat-icon">
+								<c:if test="${categorie.equals(\"Informatique\")}">
+									<span class="flaticon-computing"></span>
+								</c:if>
+								<c:if test="${categorie.equals(\"Communication\")}">
+									<span class="flaticon-education"></span>
+								</c:if>
+								<c:if test="${categorie.equals(\"Général\")}">
+									<span class="flaticon-business"></span>
+								</c:if>
+								<c:if test="${categorie.equals(\"Economie\")}">
+									<span class="flaticon-tools-and-utensils"></span>
+								</c:if>
+								<c:if test="${categorie.equals(\"Réseaux\")}">
+									<span class="flaticon-communication"></span>
+								</c:if>
+								<c:if test="${categorie==null || categorie.equals(\"null\")}">
+									<span class="flaticon-education"></span>
+								</c:if>
 							</div>
-							<div class="team-caption">
-								<h3>
-									<a href="profile.jsp"><%=e.getNom()%> <%=" "%><%=e.getPrenom()%></a>
-								</h3>
-								<p><%=e.getEcole()%></p>
-								<a href="Etudiant?op=profile&id=<%=e.getId()%>" type="button"
-									class="btn btn-info ">Profile</a>
+							<div class="cat-cap">
+								<h5>
+									<a href="Matiere?niveau=<%=niveau%>&matiere=<%=m.getNom()%>"><%=m.getNom() + "  "%></br>
+										<span class="flaticon-computing"
+										style="font-size: 60%; color: orange;">Enseignants</span> </a>
+
+								</h5>
+								<p class="scroller"
+									style="text-align: justify; scrollbar-width: thin;"><%=m.getDescription()%></p>
+								<%
+								if (user.isAdmin()) {
+								%>
+								<a href="ModifierMatiere.jsp?id=<%=m.getId()%>" type="button"
+									class="btn btn-primary btn-sm"
+									style="font-size: 12px; background: #87CEEB; padding: 25px 30px;">
+									<span style="color: white;">Modifier</span>
+								</a>
+								<%
+								if (m.isAvailable() == true) {
+								%>
+								<a href="Matiere?op=MatiereUnavailable&id=<%=m.getId()%>"
+									class="btn btn-primary btn-sm"
+									style="font-size: 12px; background: #c70e0e; padding: 25px 30px;">
+									<span style="color: white;">Indisponible</span>
+								</a>
+								<%
+								} else {
+								%>
+								<a href="Matiere?op=MatiereAvailable&id=<%=m.getId()%>"
+									class="btn btn-primary btn-sm"
+									style="font-size: 12px; background: green; padding: 25px 30px;">
+									<span style="color: white;">Disponible</span>
+								</a>
+								<%
+								}
+								}
+								%>
+								<%
+								if (user.getRole().equals("enseignant")) {
+									if (MesMatieres) {
+								%>
+								<a
+									href="Enseignant?op=MatiereUnavailable&idEnseignant=<%=user.getId()%>&idMatiere=<%=m.getId()%>"
+									class="btn btn-primary btn-sm"
+									style="font-size: 12px; background: #c70e0e; padding: 25px 30px; margin: 0% 22%;">
+									<span style="color: white;">Indisponible</span>
+								</a>
+								<%
+								} else {
+								%>
+								<a
+									href="Enseignant?op=MatiereAvailable&idEnseignant=<%=user.getId()%>&idMatiere=<%=m.getId()%>"
+									class="btn btn-primary btn-sm"
+									style="font-size: 12px; background: green; padding: 25px 30px; margin: 0% 22%;">
+									<span style="color: white;">Enseigner</span>
+								</a>
+
+								<%
+								}
+								}
+								%>
 							</div>
 						</div>
 					</div>
@@ -247,10 +356,10 @@ List<Etudiant> listEtudiants = (List<Etudiant>) request.getAttribute("listEtudia
 					}
 					%>
 				</div>
+				<!-- Section Button -->
 			</div>
 		</div>
-		</br> </br>
-
+		<!-- Categories Area End -->
 	</main>
 
 	<footer>

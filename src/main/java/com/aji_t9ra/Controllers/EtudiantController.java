@@ -14,6 +14,7 @@ import javax.servlet.http.HttpSession;
 
 import com.aji_t9ra.DAO.EnseignantDAO;
 import com.aji_t9ra.DAO.EtudiantDAO;
+import com.aji_t9ra.DAO.MatiereDAO;
 import com.aji_t9ra.DAO.UserDAO;
 import com.aji_t9ra.Models.Enseignant;
 import com.aji_t9ra.Models.Etudiant;
@@ -32,6 +33,8 @@ public class EtudiantController extends HttpServlet {
 	private UserDAO userDao = new UserDAO();
 	private EtudiantDAO etudiantDao = new EtudiantDAO();
 	private EnseignantDAO enseignantDao=new EnseignantDAO();
+    private MatiereDAO matiereDao = new MatiereDAO();
+
 
 	public EtudiantController() {
 		super();
@@ -59,7 +62,7 @@ public class EtudiantController extends HttpServlet {
 			 try {
 			   HttpSession session =request.getSession();
 			   User newUser= (User)session.getAttribute("newUser");
-
+			   request.setCharacterEncoding("UTF-8");
 			   int id =userDao.AddUser(newUser);
 			   Etudiant newEtudiant = new Etudiant();
 			   newEtudiant.setNiveau_scolaire(request.getParameter("niveau"));
@@ -80,12 +83,14 @@ public class EtudiantController extends HttpServlet {
 			}
 			
 		 }
+		 
 		 if(op.equals("newEtudiants"))
 		 {
 
 			 try {
 				List<Etudiant> listNewEtudiants = etudiantDao.getNewEtudiants();
 				request= Counts(request);
+				request.setCharacterEncoding("UTF-8");
 				request.setAttribute("listEtudiants", listNewEtudiants);
 				RequestDispatcher dispatcher = request.getRequestDispatcher("Etudiants.jsp");
 				dispatcher.forward(request, response);
@@ -100,6 +105,7 @@ public class EtudiantController extends HttpServlet {
 			 try {
 				List<Etudiant> listNewEtudiants = etudiantDao.getEtudiants();
 				request= Counts(request);
+				request.setCharacterEncoding("UTF-8");
 				request.setAttribute("listEtudiants", listNewEtudiants);
 				RequestDispatcher dispatcher = request.getRequestDispatcher("Etudiants.jsp");
 				dispatcher.forward(request, response);
@@ -115,6 +121,7 @@ public class EtudiantController extends HttpServlet {
 				int id =Integer.parseInt(request.getParameter("id"));
 				Etudiant etd = etudiantDao.getEtudiantByID(id);
 				request= Counts(request);
+				request.setCharacterEncoding("UTF-8");
 				request.setAttribute("profile", "etudiant");
 				request.setAttribute("etudiant", etd);
 				RequestDispatcher dispatcher = request.getRequestDispatcher("profile.jsp");
@@ -124,6 +131,25 @@ public class EtudiantController extends HttpServlet {
 				e.printStackTrace();
 			}
 		 }
+		 if(op.equals("modifier"))
+		 {
+
+			 try {
+				request.setCharacterEncoding("UTF-8");
+				int id =Integer.parseInt(request.getParameter("id"));
+				String description = (String)request.getParameter("description");
+				etudiantDao.UpdateDescriptionEtudiant(id,description);
+				Etudiant etudiant = etudiantDao.getEtudiantByID(id);
+				request= Counts(request);
+				request.setAttribute("profile", "etudiant");
+				request.setAttribute("etudiant", etudiant);
+				RequestDispatcher dispatcher = request.getRequestDispatcher("profile.jsp");
+				dispatcher.forward(request, response);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		 }		 
 		 if(op.equals("approver"))
 		 {
 
@@ -131,6 +157,7 @@ public class EtudiantController extends HttpServlet {
 				int id =Integer.parseInt(request.getParameter("id"));
 				etudiantDao.ApproverEtudiant(id);
 				Etudiant etd = etudiantDao.getEtudiantByID(id);
+				request.setCharacterEncoding("UTF-8");
 				request= Counts(request);
 				request.setAttribute("etudiant", etd);
 				RequestDispatcher dispatcher = request.getRequestDispatcher("profile.jsp");
@@ -147,6 +174,7 @@ public class EtudiantController extends HttpServlet {
 				int id =Integer.parseInt(request.getParameter("id"));
 				etudiantDao.desactiverEtudiant(id);
 				Etudiant etd = etudiantDao.getEtudiantByID(id);
+				request.setCharacterEncoding("UTF-8");
 				request= Counts(request);
 				request.setAttribute("etudiant", etd);
 				RequestDispatcher dispatcher = request.getRequestDispatcher("profile.jsp");
@@ -189,6 +217,10 @@ public class EtudiantController extends HttpServlet {
 	
 	public HttpServletRequest Counts(HttpServletRequest request) throws SQLException
 	{
+		List<String> categories=matiereDao.getCategories();
+		List<String> niveaux=matiereDao.getNiveaux();
+		request.setAttribute("niveaux", niveaux);
+		request.setAttribute("categories", categories);
 		int nbrEn = enseignantDao.nombreNosEnseignant();
 		int nbrNewEn=enseignantDao.nombreNouveauEnseignant();
 		int nbrDEns=enseignantDao.nombreDesacEnseignant();

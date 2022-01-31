@@ -92,7 +92,8 @@ public class EnseignantDAO extends AbstractDAO {
 			ResultSet rs1 = ps1.executeQuery();
 			List<Matiere> listMatiere = new ArrayList();
 			while (rs1.next()) {
-				Matiere m = new Matiere(rs1.getInt("id"),rs1.getString("NOM"));
+				Matiere m = new Matiere(rs1.getInt("id"), rs1.getString("NOM"), rs1.getString("Description"),
+						rs1.getBoolean("isAvailable"), rs1.getString("categorie"));
 				listMatiere.add(m);
 			}
 			newEns.setListMatieres(listMatiere);
@@ -161,7 +162,8 @@ public class EnseignantDAO extends AbstractDAO {
 			ResultSet rs1 = ps1.executeQuery();
 			List<Matiere> listMatiere = new ArrayList();
 			while (rs1.next()) {
-				Matiere m = new Matiere(rs1.getInt("id"),rs1.getString("NOM"));
+				Matiere m = new Matiere(rs1.getInt("id"), rs1.getString("NOM"), rs1.getString("Description"),
+						rs1.getBoolean("isAvailable"), rs1.getString("categorie"));
 				listMatiere.add(m);
 			}
 			newEns.setListMatieres(listMatiere);
@@ -200,13 +202,137 @@ public class EnseignantDAO extends AbstractDAO {
 			ResultSet rs1 = ps1.executeQuery();
 			List<Matiere> listMatiere = new ArrayList();
 			while (rs1.next()) {
-				Matiere m = new Matiere(rs1.getInt("id"),rs1.getString("NOM"));
+				Matiere m = new Matiere(rs1.getInt("id"), rs1.getString("NOM"), rs1.getString("Description"),
+						rs1.getBoolean("isAvailable"), rs1.getString("categorie"));
 				listMatiere.add(m);
 			}
 			ens.setListMatieres(listMatiere);
 		}
 
 		return ens;
+	}
+
+	public List<Enseignant> getEnseignantsByMatiere(String matiere) throws SQLException {
+		List<Enseignant> listEnseignant = new ArrayList();
+		String query = "select e.* from enseignant e " + "left join ens_matiere em on e.id=em.id_enseignant "
+				+ "left join matiere m on em.id_matiere=m.id where m.nom=? and e.isApproved=? and e.isActive=?";
+		PreparedStatement ps = this.getPrepareStatement(query);
+		ps.setString(1, matiere);
+		ps.setInt(2, 1);
+		ps.setInt(3, 1);
+
+		ResultSet rs = ps.executeQuery();
+		while (rs.next()) {
+			Enseignant Ens = new Enseignant();
+			Ens.setId(rs.getInt("ID"));
+			Ens.setNom(rs.getString("NOM"));
+			Ens.setPrenom(rs.getString("PRENOM"));
+			Ens.setEmail(rs.getString("EMAIL"));
+			Ens.setUsername(rs.getString("USERNAME"));
+			// Ens.setNiveau(rs.getString("Niveau"));
+			Ens.setOrganisme(rs.getString("organisme"));
+			Ens.setDescription(rs.getString("description"));
+			Ens.setApproved(true);
+			Ens.setRole("enseignant");
+			Ens.setAdmin(rs.getBoolean("isAdmin"));
+			Ens.setActive(rs.getBoolean("isActive"));
+
+			listEnseignant.add(Ens);
+
+		}
+
+		return listEnseignant;
+	}
+
+	public List<Enseignant> getEnseignantsByNiveau(String niveau) throws SQLException {
+		List<Enseignant> listEnseignant = new ArrayList();
+		String query = "select e.*,n.niveau from enseignant e left join enseignant_niveau en on e.id=en.id_enseignant "
+				+ "left join niveau_scolaire n on en.id_niveau_scolaire=n.id"
+				+ " where n.niveau=? and e.isApproved=? and e.isActive=?";
+		PreparedStatement ps = this.getPrepareStatement(query);
+		ps.setString(1, niveau);
+		ps.setInt(2, 1);
+		ps.setInt(3, 1);
+		ResultSet rs = ps.executeQuery();
+		while (rs.next()) {
+			Enseignant Ens = new Enseignant();
+			Ens.setId(rs.getInt("ID"));
+			Ens.setNom(rs.getString("NOM"));
+			Ens.setPrenom(rs.getString("PRENOM"));
+			Ens.setEmail(rs.getString("EMAIL"));
+			Ens.setUsername(rs.getString("USERNAME"));
+			Ens.setNiveau(rs.getString("Niveau"));
+			Ens.setOrganisme(rs.getString("organisme"));
+			Ens.setDescription(rs.getString("description"));
+			Ens.setApproved(true);
+			Ens.setRole("enseignant");
+			Ens.setAdmin(rs.getBoolean("isAdmin"));
+			Ens.setActive(rs.getBoolean("isActive"));
+			listEnseignant.add(Ens);
+
+		}
+
+		return listEnseignant;
+	}
+
+	public List<Enseignant> getEnseignantsPossible(String niveau, int idmatiere) throws SQLException {
+		List<Enseignant> listEnseignant = new ArrayList();
+		String query = "select e.*,n.niveau from enseignant e left join enseignant_niveau en "
+				+ "on e.id=en.id_enseignant left join niveau_scolaire n on en.id_niveau_scolaire=n.id "
+				+ "where n.niveau=? and e.isActive=? and isApproved=? and"
+				+ " not exists(select 1 from ens_matiere en where en.id_enseignant=e.id and en.id_matiere=?)";
+		PreparedStatement ps = this.getPrepareStatement(query);
+		ps.setString(1, niveau);
+		ps.setInt(2, 1);
+		ps.setInt(3, 1);
+		ps.setInt(4, idmatiere);
+		ResultSet rs = ps.executeQuery();
+		while (rs.next()) {
+			Enseignant Ens = new Enseignant();
+			Ens.setId(rs.getInt("ID"));
+			Ens.setNom(rs.getString("NOM"));
+			Ens.setPrenom(rs.getString("PRENOM"));
+			Ens.setEmail(rs.getString("EMAIL"));
+			Ens.setUsername(rs.getString("USERNAME"));
+			Ens.setNiveau(rs.getString("Niveau"));
+			Ens.setOrganisme(rs.getString("organisme"));
+			Ens.setDescription(rs.getString("description"));
+			Ens.setApproved(true);
+			Ens.setRole("enseignant");
+			Ens.setAdmin(rs.getBoolean("isAdmin"));
+			Ens.setActive(rs.getBoolean("isActive"));
+			listEnseignant.add(Ens);
+
+		}
+
+		return listEnseignant;
+	}
+
+	public void SupprimerEnseignantDeMatiere(int id, int idMatiere) throws SQLException {
+		String query = "delete from ens_matiere where  id_enseignant=? and id_matiere=? ";
+		PreparedStatement ps = this.getPrepareStatement(query);
+		ps.setInt(1, id);
+		ps.setInt(2, idMatiere);
+		ps.executeUpdate();
+	}
+
+	public void AjouterEnseignantAmatiere(int id, int idMatiere) throws SQLException {
+		String query = "insert into ens_matiere(`ID_Matiere`, `ID_User_ENSEIGNANT`, `ID_ENSEIGNANT`) VALUES (?,?,?)";
+		PreparedStatement ps = this.getPrepareStatement(query);
+		ps.setInt(1, idMatiere);
+		ps.setInt(2, id);
+		ps.setInt(3, id);
+		ps.executeUpdate();
+	}
+
+	public void UpdateDescriptionEnseignant(int id, String description) throws SQLException {
+		String query = "update  enseignant set Description=? where id=?";
+
+		PreparedStatement ps = this.getPrepareStatement(query);
+		ps.setString(1, description);
+		ps.setInt(2, id);
+		ps.executeUpdate();
+
 	}
 
 	public void ApproverEnseignant(int id) throws SQLException {
@@ -271,36 +397,36 @@ public class EnseignantDAO extends AbstractDAO {
 	}
 
 	public int nombreNosEnseignant() throws SQLException {
-		String query ="select count(*) from enseignant where isApproved=? and isActive=?";
+		String query = "select count(*) from enseignant where isApproved=? and isActive=?";
 		PreparedStatement ps = this.getPrepareStatement(query);
-        ps.setInt(1, 1);
-        ps.setInt(2, 1);
-        ResultSet rs = ps.executeQuery();
-        rs.next();
-        int nbr=rs.getInt(1);
+		ps.setInt(1, 1);
+		ps.setInt(2, 1);
+		ResultSet rs = ps.executeQuery();
+		rs.next();
+		int nbr = rs.getInt(1);
 		return nbr;
 	}
-	
+
 	public int nombreDesacEnseignant() throws SQLException {
-		String query ="select count(*) from enseignant where isApproved=? and isActive=?";
+		String query = "select count(*) from enseignant where isApproved=? and isActive=?";
 		PreparedStatement ps = this.getPrepareStatement(query);
-        ps.setInt(1, 1);
-        ps.setInt(2, 0);
-        ResultSet rs = ps.executeQuery();
-        rs.next();
-        int nbr=rs.getInt(1);
+		ps.setInt(1, 1);
+		ps.setInt(2, 0);
+		ResultSet rs = ps.executeQuery();
+		rs.next();
+		int nbr = rs.getInt(1);
 		return nbr;
 	}
-	
+
 	public int nombreNouveauEnseignant() throws SQLException {
-		String query ="select count(*) from enseignant where isApproved=? and isActive=?";
+		String query = "select count(*) from enseignant where isApproved=? and isActive=?";
 		PreparedStatement ps = this.getPrepareStatement(query);
-        ps.setInt(1, 0);
-        ps.setInt(2, 0);
-        ResultSet rs = ps.executeQuery();
-        rs.next();
-        int nbr=rs.getInt(1);
+		ps.setInt(1, 0);
+		ps.setInt(2, 0);
+		ResultSet rs = ps.executeQuery();
+		rs.next();
+		int nbr = rs.getInt(1);
 		return nbr;
 	}
-	
+
 }

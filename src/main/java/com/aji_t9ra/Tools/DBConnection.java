@@ -29,7 +29,7 @@ public class DBConnection {
   public Connection connectSource() {
 	try {
 		Class.forName(properties.getProperty("jdbcPath"));
-		String url="jdbc:"+properties.getProperty("protocolSource")+"://"+properties.getProperty("ipsource")+"/"+properties.getProperty("dbName");
+		String url="jdbc:"+properties.getProperty("protocolSource")+"://"+properties.getProperty("ipsource")+"/"+properties.getProperty("dbName")+"?useUnicode=true&characterEncoding=UTF-8";
 		connection=DriverManager.getConnection(url,properties.getProperty("usernameSource"),properties.getProperty("passwordSource"));
         return connection;
         

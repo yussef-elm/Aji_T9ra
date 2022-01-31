@@ -1,7 +1,9 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 
 <%@page import="java.util.*"%>
 <%@page import="com.aji_t9ra.Models.*"%>
+<%@page import="com.aji_t9ra.DAO.*"%>
 
 
 <%@ taglib prefix='c' uri='http://java.sun.com/jsp/jstl/core'%>
@@ -22,14 +24,16 @@ int nosEtudiant = (int) request.getAttribute("nosEtudiant");
 int newEtudiant = (int) request.getAttribute("newEtudiant");
 int DEtudiant = (int) request.getAttribute("DEtudiant");
 int DUsers = (int) request.getAttribute("DUsers");
-
 %>
 
 <%
+List<String> categories = (List<String>) request.getAttribute("categories");
+
 String p = (String) request.getAttribute("profile");
 
 Enseignant enseignant = (Enseignant) request.getAttribute("enseignant");
 Etudiant etudiant = (Etudiant) request.getAttribute("etudiant");
+User admin = (User) request.getAttribute("admin");
 %>
 <!doctype html>
 <html class="no-js" lang="zxx">
@@ -97,7 +101,9 @@ Etudiant etudiant = (Etudiant) request.getAttribute("etudiant");
 								</div>
 								<div class="header-info-right">
 									<ul>
-										<li><a href="Logout"><i class="ti-user"></i>Deconnexion</a></li>
+										<li><a href="User?op=profile&id=<%=user.getId()%>"><i
+												class="ti-user"></i> Mon Profil</a></li>
+										<li><a href="Logout"><i class="ti-shift-right"></i>Deconnexion</a></li>
 									</ul>
 								</div>
 							</div>
@@ -115,26 +121,81 @@ Etudiant etudiant = (Etudiant) request.getAttribute("etudiant");
 
 									<ul class=" navigation navbar-links">
 										<li class="navbar-dropdown"><a style="padding-top: 30px;"
-											href="index.html"><img src="assets/img/logo/logo1.png"></a></li>
-										<li class="navbar-dropdown"><a href="#">Acceuil</a></li>
+											href="index.jsp"><img src="assets/img/logo/logo1.png"></a></li>
+										<li class="navbar-dropdown"><a href="index.jsp">Acceuil</a></li>
 										<c:if test="${user.isAdmin() == true}">
 
-											<li class="navbar-dropdown"><a href="#">Enseignants</a>
+											<li class="navbar-dropdown"><a>Enseignants</a>
 												<div class="dropdown">
-													<a href="Enseignant?op=Enseignants">Nos Enseignants <%="(" + nosEnseignant + ")"%></a>
-													<a href="Enseignant?op=newEnseignants">Nouveaux
-														Enseignants <%="(" + newEnseignant + ")"%></a>
+													<a href="Enseignant?op=Enseignants"
+														style="padding: 10px 10px;">Nos Enseignants <%="(" + nosEnseignant + ")"%></a>
+													<a href="Enseignant?op=newEnseignants"
+														style="padding: 10px 10px;">Nouveaux Enseignants <%="(" + newEnseignant + ")"%></a>
 												</div></li>
-											<li class="navbar-dropdown"><a href="#">Etudiants</a>
+											<li class="navbar-dropdown"><a>Etudiants</a>
 												<div class="dropdown">
-													<a href="Etudiant?op=Etudiants">Nos Etudiants <%="(" + nosEtudiant + ")"%></a>
-													<a href="Etudiant?op=newEtudiants">Nouveaux
-														Etudiants <%="(" + newEtudiant + ")"%></a>
+													<a href="Etudiant?op=Etudiants" style="padding: 10px 10px;">Nos
+														Etudiants <%="(" + nosEtudiant + ")"%></a> <a
+														href="Etudiant?op=newEtudiants"
+														style="padding: 10px 10px;">Nouveaux Etudiants <%="(" + newEtudiant + ")"%></a>
+												</div></li>
+											<li class="navbar-dropdown"><a>Matiéres</a>
+												<div class="dropdown">
+													<ul class="navigation navbar-links-second">
+														<li class="navbar-dropdown-second"><a
+															style="padding: 10px 10px;"> Universitaire</a>
+															<div class="dropdown-second">
+																<%
+																for (String c : categories) {
+																%>
+																<a href="Matiere?niveau=Universitaire&categorie=<%=c%>"
+																	style="padding: 10px 10px;"><%=c%></a>
+																<%
+																}
+																%>
+															</div></li>
+													</ul>
+													<a href="Matiere?niveau=Lycee" style="padding: 10px 10px;">
+														Lycée </a> <a href="Matiere?niveau=College"
+														style="padding: 10px 10px;"> Collége </a>
 												</div></li>
 											<li><a href="User?op=ComptesDesactiver">Comptes
 													Desactivés <%="(" + DUsers + ")"%></a></li>
 										</c:if>
-
+										<c:if test="${user.getRole().equals(\"enseignant\")}">
+											<li class="navbar-dropdown"><a
+												href="Enseignant?op=mesMatieres&id=<%=user.getId()%>">Mes
+													Matiéres</a></li>
+											<%
+											final EnseignantDAO eDao = new EnseignantDAO();
+											Enseignant e = eDao.getEnseignantByID(user.getId());
+											if (!e.getNiveau().equals("Universitaire")) {
+											%>
+											<li class="navbar-dropdown"><a
+												href="Enseignant?op=MatieresDispo&id=<%=user.getId()%>">Matiéres
+													Disponible</a></li>
+											<%
+											} else {
+											%>
+											<ul class="navigation navbar-links">
+												<li class="navbar-dropdown"><a> Matiéres
+														Disponible</a>
+													<div class="dropdown">
+														<%
+														for (String c : categories) {
+														%>
+														<a
+															href="Enseignant?op=MatieresDispo&id=<%=user.getId()%>&categorie=<%=c%>"
+															style="padding: 10px 10px;"><%=c%></a>
+														<%
+														}
+														%>
+													</div></li>
+											</ul>
+											<%
+											}
+											%>
+										</c:if>
 									</ul>
 								</nav>
 							</div>
@@ -152,7 +213,8 @@ Etudiant etudiant = (Etudiant) request.getAttribute("etudiant");
 		<!-- Header End -->
 	</header>
 
-	<main>
+	<main
+		style="background-image: url('./assets/img/blog/back1.jpg'); background-size: cover;">
 		<c:if test="${enseignant!=null}">
 			</br>
 			</br>
@@ -215,6 +277,13 @@ Etudiant etudiant = (Etudiant) request.getAttribute("etudiant");
 										style="background: green;">Activer</a>
 								</c:if>
 							</c:if>
+							<c:if
+								test="${enseignant.getId() == user.getId() && user.isAdmin()==false}">
+								<a
+									href="ModifierProfile.jsp?profile=Enseignant&id=<%=enseignant.getId()%>"
+									type="button" class="btn btn-info btn-danger"
+									style="background: #87CEEB; padding: 25px 30px;">Modifier</a>
+							</c:if>
 						</div>
 					</div>
 				</div>
@@ -274,6 +343,13 @@ Etudiant etudiant = (Etudiant) request.getAttribute("etudiant");
 										style="background: green;">Activer</a>
 								</c:if>
 							</c:if>
+							<c:if
+								test="${etudiant.getId() == user.getId() && user.isAdmin()==false}">
+								<a
+									href="ModifierProfile.jsp?profile=Etudiant&id=<%=etudiant.getId()%>"
+									type="button" class="btn btn-info btn-danger"
+									style="background: #87CEEB; padding: 25px 30px;">Modifier</a>
+							</c:if>
 						</div>
 					</div>
 				</div>
@@ -282,6 +358,41 @@ Etudiant etudiant = (Etudiant) request.getAttribute("etudiant");
 			</br>
 			</br>
 		</c:if>
+
+		<c:if test="${admin!=null}">
+			</br>
+			</br>
+			<div class="container">
+				<div class="">
+					<div class="card" style="border: solid;">
+						<div class="card-body text-center">
+							<c:if test="${admin.isApproved()==true}">
+								<img class="avatar rounded-circle"
+									style="max-width: 2rem; margin-top: -2rem"
+									src="assets/img/elements/certif.png" alt="certif">
+							</c:if>
+							<img class="avatar rounded-circle" style="border: solid;"
+								src="assets/img/elements/admin.jpg" alt="">
+							<c:if test="${admin.isActive()==true}">
+								<img class="avatar rounded-circle"
+									style="max-width: 2rem; margin-top: -2rem"
+									src="assets/img/elements/act.png" alt="">
+							</c:if>
+							<h4 class="card-title"><%=admin.getNom()%><%=" "%><%=admin.getPrenom()%></h4>
+							<h6 class="card-subtitle mb-2 text-muted">
+								<%="Admin"%>
+							</h6>
+							<h6 class="card-subtitle mb-2 text-muted">
+								<%=admin.getEmail()%></h6>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			</br>
+			</br>
+		</c:if>
+
 	</main>
 
 	<footer>

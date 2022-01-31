@@ -1,9 +1,9 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 
 <%@page import="java.util.*"%>
-<%@page import="com.aji_t9ra.Models.User"%>
-<%@page import="com.aji_t9ra.Models.Enseignant"%>
-<%@page import="com.aji_t9ra.Models.Etudiant"%>
+<%@page import="com.aji_t9ra.Models.*"%>
+<%@page import="com.aji_t9ra.DAO.*"%>
 
 <%@ taglib prefix='c' uri='http://java.sun.com/jsp/jstl/core'%>
 
@@ -28,10 +28,11 @@ int nosEtudiant = (int) request.getAttribute("nosEtudiant");
 int newEtudiant = (int) request.getAttribute("newEtudiant");
 int DEtudiant = (int) request.getAttribute("DEtudiant");
 int DUsers = (int) request.getAttribute("DUsers");
-
 %>
 <%
 // get the students from the request object (sent by servlet)
+List<String> categories = (List<String>) request.getAttribute("categories");
+
 List<Enseignant> listEnseignants = (List<Enseignant>) request.getAttribute("listEnseignants");
 List<Etudiant> listEtudiants = (List<Etudiant>) request.getAttribute("listEtudiants");
 %>
@@ -104,7 +105,9 @@ List<Etudiant> listEtudiants = (List<Etudiant>) request.getAttribute("listEtudia
 								</div>
 								<div class="header-info-right">
 									<ul>
-										<li><a href="Logout"><i class="ti-user"></i>Deconnexion</a></li>
+										<li><a href="User?op=profile&id=<%=user.getId()%>"><i
+												class="ti-user"></i> Mon Profil</a></li>
+										<li><a href="Logout"><i class="ti-shift-right"></i>Deconnexion</a></li>
 									</ul>
 								</div>
 							</div>
@@ -118,28 +121,84 @@ List<Etudiant> listEtudiants = (List<Etudiant>) request.getAttribute("listEtudia
 							<!-- Main-menu -->
 							<div class="main-menu d-none d-lg-block">
 								<nav>
+
 									<ul class=" navigation navbar-links">
 										<li class="navbar-dropdown"><a style="padding-top: 30px;"
-											href="index.html"><img src="assets/img/logo/logo1.png"></a></li>
-										<li class="navbar-dropdown"><a href="#">Acceuil</a></li>
+											href="index.jsp"><img src="assets/img/logo/logo1.png"></a></li>
+										<li class="navbar-dropdown"><a href="index.jsp">Acceuil</a></li>
 										<c:if test="${user.isAdmin() == true}">
 
-											<li class="navbar-dropdown"><a href="#">Enseignants</a>
+											<li class="navbar-dropdown"><a>Enseignants</a>
 												<div class="dropdown">
-													<a href="Enseignant?op=Enseignants">Nos Enseignants <%="(" + nosEnseignant + ")"%></a>
-													<a href="Enseignant?op=newEnseignants">Nouveaux
-														Enseignants <%="(" + newEnseignant + ")"%></a>
+													<a href="Enseignant?op=Enseignants"
+														style="padding: 10px 10px;">Nos Enseignants <%="(" + nosEnseignant + ")"%></a>
+													<a href="Enseignant?op=newEnseignants"
+														style="padding: 10px 10px;">Nouveaux Enseignants <%="(" + newEnseignant + ")"%></a>
 												</div></li>
-											<li class="navbar-dropdown"><a href="#">Etudiants</a>
+											<li class="navbar-dropdown"><a>Etudiants</a>
 												<div class="dropdown">
-													<a href="Etudiant?op=Etudiants">Nos Etudiants <%="(" + nosEtudiant + ")"%></a>
-													<a href="Etudiant?op=newEtudiants">Nouveaux
-														Etudiants <%="(" + newEtudiant + ")"%></a>
+													<a href="Etudiant?op=Etudiants" style="padding: 10px 10px;">Nos
+														Etudiants <%="(" + nosEtudiant + ")"%></a> <a
+														href="Etudiant?op=newEtudiants"
+														style="padding: 10px 10px;">Nouveaux Etudiants <%="(" + newEtudiant + ")"%></a>
+												</div></li>
+											<li class="navbar-dropdown"><a>Matiéres</a>
+												<div class="dropdown">
+													<ul class="navigation navbar-links-second">
+														<li class="navbar-dropdown-second"><a
+															style="padding: 10px 10px;"> Universitaire</a>
+															<div class="dropdown-second">
+																<%
+																for (String c : categories) {
+																%>
+																<a href="Matiere?niveau=Universitaire&categorie=<%=c%>"
+																	style="padding: 10px 10px;"><%=c%></a>
+																<%
+																}
+																%>
+															</div></li>
+													</ul>
+													<a href="Matiere?niveau=Lycee" style="padding: 10px 10px;">
+														Lycée </a> <a href="Matiere?niveau=College"
+														style="padding: 10px 10px;"> Collége </a>
 												</div></li>
 											<li><a href="User?op=ComptesDesactiver">Comptes
 													Desactivés <%="(" + DUsers + ")"%></a></li>
 										</c:if>
-
+										<c:if test="${user.getRole().equals(\"enseignant\")}">
+											<li class="navbar-dropdown"><a
+												href="Enseignant?op=mesMatieres&id=<%=user.getId()%>">Mes
+													Matiéres</a></li>
+											<%
+											final EnseignantDAO eDao = new EnseignantDAO();
+											Enseignant e = eDao.getEnseignantByID(user.getId());
+											if (!e.getNiveau().equals("Universitaire")) {
+											%>
+											<li class="navbar-dropdown"><a
+												href="Enseignant?op=MatieresDispo&id=<%=user.getId()%>">Matiéres
+													Disponible</a></li>
+											<%
+											} else {
+											%>
+											<ul class="navigation navbar-links">
+												<li class="navbar-dropdown"><a> Matiéres
+														Disponible</a>
+													<div class="dropdown">
+														<%
+														for (String c : categories) {
+														%>
+														<a
+															href="Enseignant?op=MatieresDispo&id=<%=user.getId()%>&categorie=<%=c%>"
+															style="padding: 10px 10px;"><%=c%></a>
+														<%
+														}
+														%>
+													</div></li>
+											</ul>
+											<%
+											}
+											%>
+										</c:if>
 									</ul>
 								</nav>
 							</div>
@@ -157,25 +216,29 @@ List<Etudiant> listEtudiants = (List<Etudiant>) request.getAttribute("listEtudia
 		<!-- Header End -->
 	</header>
 
-	<main>
+	<main
+		style="background-image: url('./assets/img/blog/back1.jpg'); background-size: cover;">
 		</br>
 		<!-- Hero End -->
 		<div class="team-area ">
 			<div class="container">
-				<h3>Comptes Enseignants Desactivés (<%=DEnseignant %>):</h3>
+				<h3 style="text-align: center;">
+					Comptes Enseignants Desactivés (<%=DEnseignant%>):
+				</h3>
 				</br>
-				<div class="row">
+				<div class="row" style="column-gap: 20px;">
 
 					<%
 					for (Enseignant e : listEnseignants) {
 					%>
-					<div class="col-lg-3 col-md-6 col-sm-6">
+					<div class="col-lg-3 col-md-6 col-sm-6"
+						style="background-color: white; border: solid; box-shadow: 5px 5px 5px 5px;">
 						<div class="single-team mb-30">
-							<div class="team-img">
-								<img src="assets/img/elements/prof.jpg" alt=""
+							<div class="team-img" style="background-color: white;">
+								<img src="assets/img/elements/proft.png" alt=""
 									style="width: 140px; height: 140px; display: block; margin-left: auto; margin-right: auto;">
 							</div>
-							<div class="team-caption">
+							<div class="team-caption" style="background-color: white;">
 								<h3>
 									<a href="profile.jsp"><%=e.getNom()%> <%=" "%><%=e.getPrenom()%></a>
 								</h3>
@@ -189,8 +252,6 @@ List<Etudiant> listEtudiants = (List<Etudiant>) request.getAttribute("listEtudia
 					<%
 					}
 					%>
-
-
 				</div>
 			</div>
 		</div>
@@ -199,14 +260,17 @@ List<Etudiant> listEtudiants = (List<Etudiant>) request.getAttribute("listEtudia
 		<!-- Hero End -->
 		<div class="team-area ">
 			<div class="container">
-				<h3>Comptes Etudiants Desactivés (<%=DEtudiant %>) :</h3>
+				<h3 style="text-align: center;">
+					Comptes Etudiants Desactivés (<%=DEtudiant%>) :
+				</h3>
 				</br>
-				<div class="row">
+				<div class="row" style="column-gap: 20px;">
 
 					<%
 					for (Etudiant e : listEtudiants) {
 					%>
-					<div class="col-lg-3 col-md-6 col-sm-6">
+					<div class="col-lg-3 col-md-6 col-sm-6"
+						style="background-color: white; padding-top: 25px; border: solid; box-shadow: 5px 5px 5px 5px;">
 						<div class="single-team mb-30">
 							<div class="team-img">
 								<img src="assets/img/elements/etu.png" alt=""

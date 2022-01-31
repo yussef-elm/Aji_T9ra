@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
 <!doctype html>
 <html class="no-js" lang="zxx">
@@ -66,27 +66,19 @@
 		</div>
 		<div class="header-bottom header-sticky">
 			<!-- Logo -->
-			<div class="logo d-none d-lg-block"
-				style="background-color: white; height: 40px; width: 50px; text-align: center;">
-				<a href="index.html"><img src="assets/img/logo/logo1.png" alt=""></a>
-			</div>
+
 			<div class="container">
 				<div class="menu-wrapper">
-					<!-- Logo -->
-					<div class="logo logo2 d-block d-lg-none"
-						style="background-color: white; height: 40px; width: 50px; text-align: center;">
-						<a href="index.html"><img src="assets/img/logo/logo1.png"
-							alt=""></a>
-					</div>
+
 					<!-- Main-menu -->
 					<div class="main-menu d-none d-lg-block">
-						<nav>
-							<ul id="navigation">
-								<li></li>
-								<li><a href="index.jsp">Accueil</a></li>
-
-							</ul>
-						</nav>
+							<nav>
+								<ul class=" navigation navbar-links">
+									<li class="navbar-dropdown"><a style="padding-top: 30px;"
+										href="index.jsp"><img src="assets/img/logo/logo1.png"></a></li>
+									<li class="navbar-dropdown"><a href="login.jsp">Acceuil</a></li>
+								</ul>
+							</nav>
 					</div>
 
 				</div>

@@ -64,25 +64,18 @@
 				</div>
 			</div>
 
-			<div class="header-bottom header-sticky" >
-				<!-- Logo -->
-				<div class="logo d-none d-lg-block" style="background-color: white;height:40px;width:50px;  text-align: center;">
-					<a href="index.html"><img src="assets/img/logo/logo1.png" alt=""></a>
-				</div>
+			<div class="header-bottom header-sticky">
+
 				<div class="container">
 					<div class="menu-wrapper">
-						<!-- Logo -->
-						<div class="logo logo2 d-block d-lg-none" style="background-color: white;height:40px;width:50px;  text-align: center;">
-							<a href="index.html"><img src="assets/img/logo/logo1.png"
-								alt=""></a>
-						</div>
+
 						<!-- Main-menu -->
 						<div class="main-menu d-none d-lg-block">
 							<nav>
-								<ul id="navigation">
-									<li></li>
-									<li><a href="index.jsp">Accueil</a></li>
-
+								<ul class=" navigation navbar-links">
+									<li class="navbar-dropdown"><a style="padding-top: 30px;"
+										href="index.jsp"><img src="assets/img/logo/logo1.png"></a></li>
+									<li class="navbar-dropdown"><a href="login.jsp">Acceuil</a></li>
 								</ul>
 							</nav>
 						</div>
@@ -99,8 +92,8 @@
 
 	<!-- Header End -->
 </header>
-<main >
-	<div class="row justify-content-center" >
+<main>
+	<div class="row justify-content-center">
 		<div class="col-md-6 col-lg-4">
 			<div class="login-wrap p-4 p-md-5">
 				<div class="icon d-flex align-items-center justify-content-center">
@@ -123,8 +116,8 @@
 				</form>
 				<div class="mt-4">
 					<div class="d-flex justify-content-center links">
-						Vous n’avez pas de compte?  <a href="inscription.jsp"> <span> </span> <span style="color: #074ba6;">   Sign
-								Up </span></a>
+						Vous n’avez pas de compte? <a href="inscription.jsp"> <span>
+						</span> <span style="color: #074ba6;"> Sign Up </span></a>
 					</div>
 				</div>
 			</div>

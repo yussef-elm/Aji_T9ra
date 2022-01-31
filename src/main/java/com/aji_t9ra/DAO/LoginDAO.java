@@ -62,11 +62,43 @@ public class LoginDAO extends AbstractDAO {
         else
         	return false;
     }
-    
+    public boolean isEtudiant(int id) throws SQLException {
+        String query = "select * from Etudiant where id_user=?";
+        PreparedStatement ps = this.getPrepareStatement(query); 
+        ps.setInt(1,id);
+        ResultSet rs  = ps.executeQuery();
+        if(rs.next())
+        	return true;
+        else
+        	return false;
+    }
     public boolean isEnseignant(User user) throws SQLException {
         String query = "select * from Enseignant where id_user=?";
         PreparedStatement ps = this.getPrepareStatement(query); 
         ps.setInt(1,user.getId());
+        ResultSet rs  = ps.executeQuery();
+        if(rs.next())
+        	return true;
+        else
+        	return false;
+    }
+    
+    public boolean isEnseignant(int id) throws SQLException {
+        String query = "select * from Enseignant where id_user=?";
+        PreparedStatement ps = this.getPrepareStatement(query); 
+        ps.setInt(1,id);
+        ResultSet rs  = ps.executeQuery();
+        if(rs.next())
+        	return true;
+        else
+        	return false;
+    }
+    
+    public boolean isAdmin(int id) throws SQLException {
+        String query = "select * from user where id=? and isAdmin=?";
+        PreparedStatement ps = this.getPrepareStatement(query); 
+        ps.setInt(1,id);
+        ps.setInt(1,1);
         ResultSet rs  = ps.executeQuery();
         if(rs.next())
         	return true;
