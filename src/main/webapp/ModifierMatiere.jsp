@@ -1,4 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 
 <%@page import="java.util.*"%>
 <%@page import="com.aji_t9ra.Models.*"%>
@@ -26,9 +27,9 @@ List<String> niveaux = (List<String>) session.getAttribute("niveaux");
 
 
 <%
- int id =Integer.parseInt(request.getParameter("id"));
- final MatiereDAO matiereDao = new MatiereDAO();
- Matiere m =matiereDao.getMatiereById(id);
+int id = Integer.parseInt(request.getParameter("id"));
+final MatiereDAO matiereDao = new MatiereDAO();
+Matiere m = matiereDao.getMatiereById(id);
 %>
 
 <!doctype html>
@@ -100,8 +101,8 @@ List<String> niveaux = (List<String>) session.getAttribute("niveaux");
 								</div>
 								<div class="header-info-right">
 									<ul>
-									     <li><a href="User?op=profile&id=<%=user.getId()%>"><i class="ti-user"></i>
-									     Mon Profil</a></li>
+										<li><a href="User?op=profile&id=<%=user.getId()%>"><i
+												class="ti-user"></i> Mon Profil</a></li>
 										<li><a href="Logout"><i class="ti-shift-right"></i>Deconnexion</a></li>
 									</ul>
 								</div>
@@ -159,7 +160,40 @@ List<String> niveaux = (List<String>) session.getAttribute("niveaux");
 											<li><a href="User?op=ComptesDesactiver">Comptes
 													Desactivés <%="(" + DUsers + ")"%></a></li>
 										</c:if>
-
+										<c:if test="${user.getRole().equals(\"enseignant\")}">
+											<li class="navbar-dropdown"><a
+												href="Enseignant?op=mesMatieres&id=<%=user.getId()%>">Mes
+													Matiéres</a></li>
+											<%
+											final EnseignantDAO eDao = new EnseignantDAO();
+											Enseignant e = eDao.getEnseignantByID(user.getId());
+											if (!e.getNiveau().equals("Universitaire")) {
+											%>
+											<li class="navbar-dropdown"><a
+												href="Enseignant?op=MatieresDispo&id=<%=user.getId()%>">Matiéres
+													Disponible</a></li>
+											<%
+											} else {
+											%>
+											<ul class="navigation navbar-links">
+												<li class="navbar-dropdown"><a> Matiéres
+														Disponible</a>
+													<div class="dropdown">
+														<%
+														for (String c : categories) {
+														%>
+														<a
+															href="Enseignant?op=MatieresDispo&id=<%=user.getId()%>&categorie=<%=c%>"
+															style="padding: 10px 10px;"><%=c%></a>
+														<%
+														}
+														%>
+													</div></li>
+											</ul>
+											<%
+											}
+											%>
+										</c:if>
 									</ul>
 								</nav>
 							</div>
@@ -182,17 +216,20 @@ List<String> niveaux = (List<String>) session.getAttribute("niveaux");
 			<div class="col-md-6 col-lg-8">
 				<div class=""
 					style="margin-top: 40px; padding: 0px 140px; padding-bottom: 80px;">
-					<h3 class="text-center mb-4">Modifier La Matiére (<%=m.getNom() %>)</h3>
-					<form action="Matiere?op=modifierMatiere&id=<%=m.getId() %>" method="post"
-						class="login-form" style="text-align: center;">
-						
-					    <input type="hidden" name="id" value="<c:out value='${m.getId()}' />" />
+					<h3 class="text-center mb-4">
+						Modifier La Matiére (<%=m.getNom()%>)
+					</h3>
+					<form action="Matiere?op=modifierMatiere&id=<%=m.getId()%>"
+						method="post" class="login-form" style="text-align: center;">
+
+						<input type="hidden" name="id"
+							value="<c:out value='${m.getId()}' />" />
 						<div class="form-group">
 							<%
 							for (String n : niveaux) {
 							%>
-							<input type="radio" name="niveau" value="<%=m.getNiveau()%>" 
-							<%if(n.equals(m.getNiveau())){ %>checked<%} %> required >
+							<input type="radio" name="niveau" value="<%=m.getNiveau()%>"
+								<%if (n.equals(m.getNiveau())) {%> checked <%}%> required>
 							<label style="padding: 0 10px;" for="<%=n%>"> <%=n%>
 							</label>
 							<%
@@ -200,31 +237,32 @@ List<String> niveaux = (List<String>) session.getAttribute("niveaux");
 							%>
 						</div>
 						<div class="form-group">
-							<input type="text" name="Matiere" id="matiere" value="<%=m.getNom() %>"
-								class="form-control rounded-left" placeholder="Matiére" required>
+							<input type="text" name="Matiere" id="matiere"
+								value="<%=m.getNom()%>" class="form-control rounded-left"
+								placeholder="Matiére" required>
 						</div>
 						<div class="form-group">
 							<%
 							for (String c : categories) {
 							%>
-							<input type="radio" name="categorie" value="<%=c%>" 
-							<%if(c.equals(m.getCategorie())) { %>checked<%} %> required>
-							<label style="padding: 0 10px;font-family: " for="<%=c%>"> <%=c%>
+							<input type="radio" name="categorie" value="<%=c%>"
+								<%if (c.equals(m.getCategorie())) {%> checked <%}%> required>
+							<label style="padding: 0 10px; font-family:" for="<%=c%>">
+								<%=c%>
 							</label>
 							<%
 							}
 							%>
 						</div>
 						<div class="form-group">
-							<textarea name="description" id="description" 
+							<textarea name="description" id="description"
 								class="form-control rounded-left" placeholder="Description"
-								rows="4" required><%=m.getDescription() %></textarea>
+								rows="4" required><%=m.getDescription()%></textarea>
 						</div>
 
 						<div class="form-group"
 							style="font-size: 50%; text-align: center;">
 							<button type="submit" value="sinscrire"
-								
 								class="form-control btn btn-primary rounded submit px-3">Modifier</button>
 						</div>
 					</form>

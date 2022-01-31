@@ -186,8 +186,7 @@ session.setAttribute("nosEnseignant", request.getAttribute("nosEnseignant"));
 											} else {
 											%>
 											<ul class="navigation navbar-links">
-												<li class="navbar-dropdown"><a> Matiéres
-														Disponible</a>
+												<li class="navbar-dropdown"><a> Matiéres Disponible</a>
 													<div class="dropdown">
 														<%
 														for (String c : categories) {
@@ -231,10 +230,22 @@ session.setAttribute("nosEnseignant", request.getAttribute("nosEnseignant"));
 			<div class="row">
 				<div class="col-lg-2">
 					<div class=" text-center mt-60 " style="margin-left: 150px;">
+						<%
+						if (niveau.equals("Universitaire")) {
+						%>
 						<a href="Matiere?niveau=<%=niveau%>&categorie=<%=categorie%>"
 							class="btn btn-danger btn-sm"
 							style="padding: 20px 20px; font-size: 12px; background: green; border-radius: 50px;">
 							Matiére Disponible</a>
+						<%
+						} else {
+						%>
+						<a href="Matiere?niveau=<%=niveau%>" class="btn btn-danger btn-sm"
+							style="padding: 20px 20px; font-size: 12px; background: green; border-radius: 50px;">
+							Matiére Disponible</a>
+						<%
+						}
+						%>
 					</div>
 				</div>
 				<div class="col-lg-8">
@@ -245,12 +256,27 @@ session.setAttribute("nosEnseignant", request.getAttribute("nosEnseignant"));
 				</div>
 				<div class="col-lg-2">
 					<div class=" text-center mt-60 " style="margin-left: -300px;">
+						<%
+						if (niveau.equals("Universitaire")) {
+						%>
 						<a
 							href="Matiere?niveau=<%=niveau%>&categorie=<%=categorie%>&etat=indisponible"
 							class="btn btn-danger btn-sm"
 							style="padding: 20px 20px; font-size: 12px; background: #c70e0e; border-radius: 50px;">
 							Matiére Indisponible <i class="flaticon-communication"></i>
 						</a>
+						<%
+						} else {
+						%>
+						<a
+							href="Matiere?niveau=<%=niveau%>&etat=indisponible"
+							class="btn btn-danger btn-sm"
+							style="padding: 20px 20px; font-size: 12px; background: #c70e0e; border-radius: 50px;">
+							Matiére Indisponible <i class="flaticon-communication"></i>
+						</a>
+						<%
+						}
+						%>
 					</div>
 				</div>
 			</div>

@@ -65,195 +65,200 @@ public class MatiereController extends HttpServlet {
 		String categorie = request.getParameter("categorie");
 		String etat = request.getParameter("etat");
 
-
-		
-		if(op!=null) {
-			        if(op.equals("MatiereUnavailable"))
-			        {
-			        	try {
-			        	    Matiere m =matiereDao.getMatiereById(Integer.parseInt(request.getParameter("id")));
-			        		matiereDao.MatiereIndisponible(m.getId());
-							List<Matiere> listMatieres = matiereDao.getMatiereByNiveauAndCategorie(m.getCategorie(),m.getNiveau());
-							request.setAttribute("listMatieres", listMatieres);
-							request = Counts(request);
-							request.setAttribute("niveau", m.getNiveau());
-							request.setAttribute("categorie", m.getCategorie());
-							RequestDispatcher dispatcher = request.getRequestDispatcher("Matiere.jsp");
-							dispatcher.forward(request, response);	
-			        		
-						} catch (SQLException e) {
-							// TODO: handle exception
-							e.printStackTrace();
-						}
-			        }
-			        if(op.equals("MatiereAvailable"))
-			        {
-			        	try {
-			        	    Matiere m =matiereDao.getMatiereById(Integer.parseInt(request.getParameter("id")));
-			        		matiereDao.MatiereDisponible(m.getId());
-							List<Matiere> listMatieres = matiereDao.getMatiereByNiveauAndCategorie(m.getCategorie(),m.getNiveau());
-							request.setAttribute("listMatieres", listMatieres);
-							request = Counts(request);
-							request.setAttribute("niveau", m.getNiveau());
-							request.setAttribute("categorie", m.getCategorie());
-							RequestDispatcher dispatcher = request.getRequestDispatcher("Matiere.jsp");
-							dispatcher.forward(request, response);	
-			        		
-						} catch (SQLException e) {
-							// TODO: handle exception
-							e.printStackTrace();
-						}
-			        }
-			        if (op.equals("ajouterMatiere")) {
-			        	try {
-			        	Matiere newMatiere = new Matiere();
-			        	newMatiere.setNom((String)request.getParameter("Matiere"));
-			        	newMatiere.setDescription((String)request.getParameter("description"));
-			        	newMatiere.setCategorie((String)request.getParameter("categorie"));
-			        	newMatiere.setNiveau((String)request.getParameter("niveau"));
-                        matiereDao.AddMatiere(newMatiere);
-						List<Matiere> listMatieres = matiereDao.getMatiereByNiveauAndCategorie(categorie,niveau);
+		if (op != null) {
+			if (op.equals("MatiereUnavailable")) {
+				try {
+					Matiere m = matiereDao.getMatiereById(Integer.parseInt(request.getParameter("id")));
+					matiereDao.MatiereIndisponible(m.getId());
+					if (m.getNiveau().equals("Universitaire")) {
+						List<Matiere> listMatieres = matiereDao.getMatiereByNiveauAndCategorie(m.getCategorie(),
+								m.getNiveau());
 						request.setAttribute("listMatieres", listMatieres);
-						request = Counts(request);
-						request.setAttribute("niveau", newMatiere.getNiveau());
-						request.setAttribute("categorie", newMatiere.getCategorie());
-						RequestDispatcher dispatcher = request.getRequestDispatcher("Matiere.jsp");
-						dispatcher.forward(request, response);
-                        
-			        	}catch (SQLException e) {
-							// TODO: handle exception
-			        		e.printStackTrace();
-						} 	
-					}
-			        if (op.equals("modifierMatiere")) {
-			        	try {
-			        	int id=Integer.parseInt(request.getParameter("id"));
-			        	Matiere Matiere = new Matiere();
-			        	Matiere.setId(Integer.parseInt(request.getParameter("id")));
-			        	Matiere.setNom((String)request.getParameter("Matiere"));
-			            Matiere.setDescription((String)request.getParameter("description"));
-			            Matiere.setCategorie((String)request.getParameter("categorie"));
-			            Matiere.setNiveau((String)request.getParameter("niveau"));
-                        matiereDao.UpdateMatiere(Matiere);
-						List<Matiere> listMatieres = matiereDao.getMatiereByNiveauAndCategorie(categorie,niveau);
+					} else {
+						List<Matiere> listMatieres = matiereDao.getMatiereByNiveau(m.getNiveau());
 						request.setAttribute("listMatieres", listMatieres);
-						request = Counts(request);
-						request.setAttribute("niveau", Matiere.getNiveau());
-						request.setAttribute("categorie", Matiere.getCategorie());
-						RequestDispatcher dispatcher = request.getRequestDispatcher("Matiere.jsp");
-						dispatcher.forward(request, response);
-                        
-			        	}catch (SQLException e) {
-							// TODO: handle exception
-			        		e.printStackTrace();
-						} 	
 					}
-					if (op.equals("Ajouter")) {
-			
-						try {
-							int idens = Integer.parseInt(request.getParameter("enseignant"));
-							Matiere m = matiereDao.getMatiereByNom(matiere);
-							enseignantDao.AjouterEnseignantAmatiere(idens, m.getId());
-							List<Enseignant> listEnseignants = enseignantDao.getEnseignantsByMatiere(matiere);
-							List<Enseignant> listEnseignantPossible = enseignantDao.getEnseignantsPossible(niveau,m.getId());
-							request = Counts(request);
-							request.setAttribute("listEnseignants", listEnseignants);
-							request.setAttribute("listEnseignantPossible", listEnseignantPossible);
-							request.setAttribute("matiere", matiere);
-							request.setAttribute("niveau", niveau);
-							request.setAttribute("Op", "matiere");
-							RequestDispatcher dispatcher = request.getRequestDispatcher("Enseignants.jsp");
-							dispatcher.forward(request, response);
-						} catch (SQLException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-					if (op.equals("Enlever")) {
-			
-						try {
-							int idens = Integer.parseInt(request.getParameter("enseignant"));
-							Matiere m = matiereDao.getMatiereByNom(matiere);
-							enseignantDao.SupprimerEnseignantDeMatiere(idens, m.getId());
-							List<Enseignant> listEnseignants = enseignantDao.getEnseignantsByMatiere(matiere);
-							List<Enseignant> listEnseignantPossible = enseignantDao.getEnseignantsPossible(niveau,m.getId());
+					request = Counts(request);
+					request.setAttribute("niveau", m.getNiveau());
+					request.setAttribute("categorie", m.getCategorie());
+					RequestDispatcher dispatcher = request.getRequestDispatcher("Matiere.jsp");
+					dispatcher.forward(request, response);
 
-							request = Counts(request);
-							request.setAttribute("listEnseignants", listEnseignants);
-							request.setAttribute("listEnseignantPossible", listEnseignantPossible);
-							request.setAttribute("matiere", matiere);
-							request.setAttribute("niveau", niveau);
-							request.setAttribute("Op", "matiere");
-							RequestDispatcher dispatcher = request.getRequestDispatcher("Enseignants.jsp");
-							dispatcher.forward(request, response);
-						} catch (SQLException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+				} catch (SQLException e) {
+					// TODO: handle exception
+					e.printStackTrace();
+				}
+			}
+			if (op.equals("MatiereAvailable")) {
+				try {
+					Matiere m = matiereDao.getMatiereById(Integer.parseInt(request.getParameter("id")));
+					matiereDao.MatiereDisponible(m.getId());
+					if (m.getNiveau().equals("Universitaire")) {
+						List<Matiere> listMatieres = matiereDao.getMatiereByNiveauAndCategorie(m.getCategorie(),
+								m.getNiveau());
+						request.setAttribute("listMatieres", listMatieres);
+					} else {
+						List<Matiere> listMatieres = matiereDao.getMatiereByNiveau(m.getNiveau());
+						request.setAttribute("listMatieres", listMatieres);
 					}
-		}
-		else {
-			  if (matiere == null) {
+					request = Counts(request);
+					request.setAttribute("niveau", m.getNiveau());
+					request.setAttribute("categorie", m.getCategorie());
+					RequestDispatcher dispatcher = request.getRequestDispatcher("Matiere.jsp");
+					dispatcher.forward(request, response);
 
-					try {
-					
-						if(categorie==null || categorie.equals("null"))
-						{
-							if(etat==null)
-							{
+				} catch (SQLException e) {
+					// TODO: handle exception
+					e.printStackTrace();
+				}
+			}
+			if (op.equals("ajouterMatiere")) {
+				try {
+					Matiere newMatiere = new Matiere();
+					newMatiere.setNom((String) request.getParameter("Matiere"));
+					newMatiere.setDescription((String) request.getParameter("description"));
+					newMatiere.setCategorie((String) request.getParameter("categorie"));
+					newMatiere.setNiveau((String) request.getParameter("niveau"));
+					matiereDao.AddMatiere(newMatiere);
+					List<Matiere> listMatieres = matiereDao.getMatiereByNiveauAndCategorie(categorie, niveau);
+					request.setAttribute("listMatieres", listMatieres);
+					request = Counts(request);
+					request.setAttribute("niveau", newMatiere.getNiveau());
+					request.setAttribute("categorie", newMatiere.getCategorie());
+					RequestDispatcher dispatcher = request.getRequestDispatcher("Matiere.jsp");
+					dispatcher.forward(request, response);
+
+				} catch (SQLException e) {
+					// TODO: handle exception
+					e.printStackTrace();
+				}
+			}
+			if (op.equals("modifierMatiere")) {
+				try {
+					int id = Integer.parseInt(request.getParameter("id"));
+					Matiere Matiere = new Matiere();
+					Matiere.setId(Integer.parseInt(request.getParameter("id")));
+					Matiere.setNom((String) request.getParameter("Matiere"));
+					Matiere.setDescription((String) request.getParameter("description"));
+					Matiere.setCategorie((String) request.getParameter("categorie"));
+					Matiere.setNiveau((String) request.getParameter("niveau"));
+					matiereDao.UpdateMatiere(Matiere);
+					List<Matiere> listMatieres = matiereDao.getMatiereByNiveauAndCategorie(categorie, niveau);
+					request.setAttribute("listMatieres", listMatieres);
+					request = Counts(request);
+					request.setAttribute("niveau", Matiere.getNiveau());
+					request.setAttribute("categorie", Matiere.getCategorie());
+					RequestDispatcher dispatcher = request.getRequestDispatcher("Matiere.jsp");
+					dispatcher.forward(request, response);
+
+				} catch (SQLException e) {
+					// TODO: handle exception
+					e.printStackTrace();
+				}
+			}
+			if (op.equals("Ajouter")) {
+
+				try {
+					int idens = Integer.parseInt(request.getParameter("enseignant"));
+					Matiere m = matiereDao.getMatiereByNom(matiere);
+					enseignantDao.AjouterEnseignantAmatiere(idens, m.getId());
+					List<Enseignant> listEnseignants = enseignantDao.getEnseignantsByMatiere(matiere);
+					List<Enseignant> listEnseignantPossible = enseignantDao.getEnseignantsPossible(niveau, m.getId());
+					request = Counts(request);
+					request.setAttribute("listEnseignants", listEnseignants);
+					request.setAttribute("listEnseignantPossible", listEnseignantPossible);
+					request.setAttribute("matiere", matiere);
+					request.setAttribute("niveau", niveau);
+					request.setAttribute("Op", "matiere");
+					RequestDispatcher dispatcher = request.getRequestDispatcher("Enseignants.jsp");
+					dispatcher.forward(request, response);
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			if (op.equals("Enlever")) {
+
+				try {
+					int idens = Integer.parseInt(request.getParameter("enseignant"));
+					Matiere m = matiereDao.getMatiereByNom(matiere);
+					enseignantDao.SupprimerEnseignantDeMatiere(idens, m.getId());
+					List<Enseignant> listEnseignants = enseignantDao.getEnseignantsByMatiere(matiere);
+					List<Enseignant> listEnseignantPossible = enseignantDao.getEnseignantsPossible(niveau, m.getId());
+
+					request = Counts(request);
+					request.setAttribute("listEnseignants", listEnseignants);
+					request.setAttribute("listEnseignantPossible", listEnseignantPossible);
+					request.setAttribute("matiere", matiere);
+					request.setAttribute("niveau", niveau);
+					request.setAttribute("Op", "matiere");
+					RequestDispatcher dispatcher = request.getRequestDispatcher("Enseignants.jsp");
+					dispatcher.forward(request, response);
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		} else {
+			if (matiere == null) {
+
+				try {
+
+					if (categorie == null || categorie.equals("null")) {
+						if (etat == null) {
 							List<Matiere> listMatieres = matiereDao.getMatiereByNiveau(niveau);
 							request.setAttribute("listMatieres", listMatieres);
-							}else {
-								List<Matiere> listMatieres = matiereDao.getUnavailableMatiereByNiveau(niveau);
-								request.setAttribute("listMatieres", listMatieres);	
-							}
-
-						}else {
-							if(etat==null) {
-							List<Matiere> listMatieres = matiereDao.getMatiereByNiveauAndCategorie(categorie,niveau);
+						} else {
+							List<Matiere> listMatieres = matiereDao.getUnavailableMatiereByNiveau(niveau);
 							request.setAttribute("listMatieres", listMatieres);
-							}else {
-								List<Matiere> listMatieres = matiereDao.getMatiereUnavailableByNiveauAndCategorie(categorie,niveau);
-								request.setAttribute("listMatieres", listMatieres);		
-							}
-
 						}
-						request = Counts(request);
-						request.setAttribute("niveau", niveau);
-						request.setAttribute("categorie", categorie);
-						RequestDispatcher dispatcher = request.getRequestDispatcher("Matiere.jsp");
-						dispatcher.forward(request, response);
-					} catch (SQLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			  else {
-					try {
-						List<Enseignant> listEnseignants = enseignantDao.getEnseignantsByMatiere(matiere);
-						Matiere m = matiereDao.getMatiereByNom(matiere);
-						List<Enseignant> listEnseignantPossible = enseignantDao.getEnseignantsPossible(niveau,m.getId());
-						request = Counts(request);
-						request.setAttribute("listEnseignants", listEnseignants);
-						request.setAttribute("listEnseignantPossible", listEnseignantPossible);
-						request.setAttribute("matiere", matiere);
-						request.setAttribute("niveau", niveau);
-						request.setAttribute("Op", "matiere");
-						RequestDispatcher dispatcher = request.getRequestDispatcher("Enseignants.jsp");
-						dispatcher.forward(request, response);
-		
-					} catch (SQLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
 
-	      }
+					} else {
+						if (etat == null) {
+							List<Matiere> listMatieres = matiereDao.getMatiereByNiveauAndCategorie(categorie, niveau);
+							request.setAttribute("listMatieres", listMatieres);
+						} else {
+							List<Matiere> listMatieres = matiereDao.getMatiereUnavailableByNiveauAndCategorie(categorie,
+									niveau);
+							request.setAttribute("listMatieres", listMatieres);
+						}
+
+					}
+					request = Counts(request);
+					request.setAttribute("niveau", niveau);
+					request.setAttribute("categorie", categorie);
+					RequestDispatcher dispatcher = request.getRequestDispatcher("Matiere.jsp");
+					dispatcher.forward(request, response);
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} else {
+				try {
+					List<Enseignant> listEnseignants = enseignantDao.getEnseignantsByMatiere(matiere);
+					Matiere m = matiereDao.getMatiereByNom(matiere);
+					List<Enseignant> listEnseignantPossible = enseignantDao.getEnseignantsPossible(niveau, m.getId());
+					request = Counts(request);
+					request.setAttribute("listEnseignants", listEnseignants);
+					request.setAttribute("listEnseignantPossible", listEnseignantPossible);
+					request.setAttribute("matiere", matiere);
+					request.setAttribute("niveau", niveau);
+					request.setAttribute("Op", "matiere");
+					RequestDispatcher dispatcher = request.getRequestDispatcher("Enseignants.jsp");
+					dispatcher.forward(request, response);
+
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
+		}
 	}
 
 	public HttpServletRequest Counts(HttpServletRequest request) throws SQLException {
-		List<String> categories=matiereDao.getCategories();
-		List<String> niveaux=matiereDao.getNiveaux();
+		List<String> categories = matiereDao.getCategories();
+		List<String> niveaux = matiereDao.getNiveaux();
 		request.setAttribute("niveaux", niveaux);
 		request.setAttribute("categories", categories);
 		int nbrEn = enseignantDao.nombreNosEnseignant();
