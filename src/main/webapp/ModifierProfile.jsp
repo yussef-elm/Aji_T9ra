@@ -30,7 +30,7 @@ int DUsers = (int) session.getAttribute("DUsers");
 <%
 final UserDAO userDao = new UserDAO();
 
-List<String> categories = (List<String>) request.getAttribute("categories");
+List<String> categories = (List<String>) session.getAttribute("categories");
 String p = (String) request.getParameter("profile");
 %>
 <!doctype html>
