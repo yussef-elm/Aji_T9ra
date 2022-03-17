@@ -15,7 +15,11 @@ if (user == null) {
 	return;
 }
 if (user.isAdmin() == false) {
-	response.sendRedirect("index.jsp");
+	session.setAttribute("listEnseignants",  (List<Enseignant>) request.getAttribute("listEnseignants"));
+	session.setAttribute("Op", (String) request.getAttribute("Op"));
+	session.setAttribute("matiere", (String) request.getAttribute("matiere"));
+	session.setAttribute("niveau", (String) request.getAttribute("niveau"));
+	response.sendRedirect("matiereEnseignant.jsp");
 	return;
 }
 %>

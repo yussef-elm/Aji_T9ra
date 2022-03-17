@@ -1,4 +1,5 @@
 <%@page import="com.aji_t9ra.DAO.EnseignantDAO"%>
+<%@page import="com.aji_t9ra.DAO.EtudiantDAO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 
@@ -156,6 +157,30 @@ List<String> categories = (List<String>) session.getAttribute("categories");
 												</div></li>
 											<li><a href="User?op=ComptesDesactiver">Comptes
 													Desactivés <%="(" + DUsers + ")"%></a></li>
+										</c:if>
+										<c:if test="${user.getRole().equals(\"etudiant\")}">
+                                        <% final EtudiantDAO etuDao = new EtudiantDAO();
+										   Etudiant etu= etuDao.getEtudiantByID(user.getId());
+										   if(!etu.getNiveau_scolaire().equals("Universitaire")){ %>			
+											<li class="navbar-dropdown"><a
+												href="Etudiant?op=MatieresDispo&id<%=user.getId() %>">Matiéres
+													Disponible</a></li>
+											<%}else{ %>		
+											<ul class="navigation navbar-links">
+												<li class="navbar-dropdown"><a > Matiéres
+													Disponible</a>
+													<div class="dropdown">
+														<%
+														for (String c : categories) {
+														%>
+														<a href="Etudiant?op=MatieresDispo&id=<%=user.getId()%>&categorie=<%=c%>"
+															style="padding: 10px 10px;"><%=c%></a>
+														<%
+														}
+														%>
+													</div></li>
+											</ul>
+										<%} %>	
 										</c:if>
 										<c:if test="${user.getRole().equals(\"enseignant\")}">
 											<li class="navbar-dropdown"><a

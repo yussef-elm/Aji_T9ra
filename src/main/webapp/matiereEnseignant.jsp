@@ -3,8 +3,9 @@
 
 <%@page import="java.util.*"%>
 <%@page import="com.aji_t9ra.Models.*"%>
-<%@page import="com.aji_t9ra.DAO.*"%>
+<%@page import="com.aji_t9ra.DAO.*" %>
 <%@ taglib prefix='c' uri='http://java.sun.com/jsp/jstl/core'%>
+
 
 <%
 User user = (User) session.getAttribute("user");
@@ -12,25 +13,21 @@ if (user == null) {
 	response.sendRedirect("login.jsp");
 	return;
 }
+
 %>
+
 <%
-int nosEnseignant = (int) session.getAttribute("nosEnseignant");
-int newEnseignant = (int) session.getAttribute("newEnseignant");
-int DEnseignant = (int) session.getAttribute("DEnseignant");
-int nosEtudiant = (int) session.getAttribute("nosEtudiant");
-int newEtudiant = (int) session.getAttribute("newEtudiant");
-int DEtudiant = (int) session.getAttribute("DEtudiant");
-int DUsers = (int) session.getAttribute("DUsers");
+// get the students from the request object (sent by servlet)
+
+List<Enseignant> listEnseignants = (List<Enseignant>) session.getAttribute("listEnseignants");
+String Op = (String) session.getAttribute("Op");
+String matiere = (String) session.getAttribute("matiere");
+String niveau = (String) session.getAttribute("niveau");
 List<String> categories = (List<String>) session.getAttribute("categories");
-List<String> niveaux = (List<String>) session.getAttribute("niveaux");
+
 %>
 
 
-<%
-int id = Integer.parseInt(request.getParameter("id"));
-final MatiereDAO matiereDao = new MatiereDAO();
-Matiere m = matiereDao.getMatiereById(id);
-%>
 
 <!doctype html>
 <html class="no-js" lang="zxx">
@@ -58,9 +55,7 @@ Matiere m = matiereDao.getMatiereById(id);
 <link rel="stylesheet" href="assets/css/nice-select.css">
 <link rel="stylesheet" href="assets/css/style.css">
 <link rel="stylesheet" href="assets/css/navbar.css">
-<link rel="stylesheet" href="assets/css/scroll.css">
-
-
+<link rel="stylesheet" href="assets/css/navbar.css">
 
 </head>
 <body>
@@ -115,87 +110,38 @@ Matiere m = matiereDao.getMatiereById(id);
 					<div class="container">
 						<div class="menu-wrapper">
 
+							<!-- Main-menu -->
 							<div class="main-menu d-none d-lg-block">
 								<nav>
+
 									<ul class=" navigation navbar-links">
 										<li class="navbar-dropdown"><a style="padding-top: 30px;"
 											href="index.jsp"><img src="assets/img/logo/logo1.png"></a></li>
 										<li class="navbar-dropdown"><a href="index.jsp">Acceuil</a></li>
-										<c:if test="${user.isAdmin() == true}">
-
-											<li class="navbar-dropdown"><a>Enseignants</a>
-												<div class="dropdown">
-													<a href="Enseignant?op=Enseignants"
-														style="padding: 10px 10px;">Nos Enseignants <%="(" + nosEnseignant + ")"%></a>
-													<a href="Enseignant?op=newEnseignants"
-														style="padding: 10px 10px;">Nouveaux Enseignants <%="(" + newEnseignant + ")"%></a>
-												</div></li>
-											<li class="navbar-dropdown"><a>Etudiants</a>
-												<div class="dropdown">
-													<a href="Etudiant?op=Etudiants" style="padding: 10px 10px;">Nos
-														Etudiants <%="(" + nosEtudiant + ")"%></a> <a
-														href="Etudiant?op=newEtudiants"
-														style="padding: 10px 10px;">Nouveaux Etudiants <%="(" + newEtudiant + ")"%></a>
-												</div></li>
-											<li class="navbar-dropdown"><a>Matiéres</a>
-												<div class="dropdown">
-													<ul class="navigation navbar-links-second">
-														<li class="navbar-dropdown-second"><a
-															style="padding: 10px 10px;"> Universitaire</a>
-															<div class="dropdown-second">
-																<%
-																for (String c : categories) {
-																%>
-																<a href="Matiere?niveau=Universitaire&categorie=<%=c%>"
-																	style="padding: 10px 10px;"><%=c%></a>
-																<%
-																}
-																%>
-															</div></li>
-													</ul>
-													<a href="Matiere?niveau=Lycee" style="padding: 10px 10px;">
-														Lycée </a> <a href="Matiere?niveau=College"
-														style="padding: 10px 10px;"> Collége </a>
-												</div></li>
-											<li><a href="User?op=ComptesDesactiver">Comptes
-													Desactivés <%="(" + DUsers + ")"%></a></li>
-										</c:if>
-										
-										<c:if test="${user.getRole().equals(\"enseignant\")}">
+                                       <c:if test="${user.getRole().equals(\"etudiant\")}">
+                                        <% final EtudiantDAO etuDao = new EtudiantDAO();
+										   Etudiant etu= etuDao.getEtudiantByID(user.getId());
+										   if(!etu.getNiveau_scolaire().equals("Universitaire")){ %>			
 											<li class="navbar-dropdown"><a
-												href="Enseignant?op=mesMatieres&id=<%=user.getId()%>">Mes
-													Matiéres</a></li>
-											<%
-											final EnseignantDAO eDao = new EnseignantDAO();
-											Enseignant e = eDao.getEnseignantByID(user.getId());
-											if (!e.getNiveau().equals("Universitaire")) {
-											%>
-											<li class="navbar-dropdown"><a
-												href="Enseignant?op=MatieresDispo&id=<%=user.getId()%>">Matiéres
+												href="Etudiant?op=MatieresDispo&id<%=user.getId() %>">Matiéres
 													Disponible</a></li>
-											<%
-											} else {
-											%>
+											<%}else{ %>		
 											<ul class="navigation navbar-links">
-												<li class="navbar-dropdown"><a> Matiéres
-														Disponible</a>
+												<li class="navbar-dropdown"><a > Matiéres
+													Disponible</a>
 													<div class="dropdown">
 														<%
 														for (String c : categories) {
 														%>
-														<a
-															href="Enseignant?op=MatieresDispo&id=<%=user.getId()%>&categorie=<%=c%>"
+														<a href="Etudiant?op=MatieresDispo&id=<%=user.getId()%>&categorie=<%=c%>"
 															style="padding: 10px 10px;"><%=c%></a>
 														<%
 														}
 														%>
 													</div></li>
 											</ul>
-											<%
-											}
-											%>
+										<%} %>	
 										</c:if>
-									</ul>
 								</nav>
 							</div>
 							<!-- Header-btn -->
@@ -211,65 +157,76 @@ Matiere m = matiereDao.getMatiereById(id);
 		</div>
 		<!-- Header End -->
 	</header>
+
 	<main
 		style="background-image: url('./assets/img/blog/back1.jpg'); background-size: cover;">
-		<div class="row justify-content-center">
-			<div class="col-md-6 col-lg-8">
-				<div class=""
-					style="margin-top: 40px; padding: 0px 140px; padding-bottom: 80px;">
-					<h3 class="text-center mb-4">
-						Modifier La Matiére (<%=m.getNom()%>)
-					</h3>
-					<form action="Matiere?op=modifierMatiere&id=<%=m.getId()%>"
-						method="post" class="login-form" style="text-align: center;">
+		<c:if test="${listEnseignants!=null }">
+			<div class="team-area ">
+				<div class="container">
+					<c:if test="${Op.equals(\"matiere\") }">
+						<h3 style="text-align: center;">
+							Enseignants de la matiére (<%=matiere%>):
+						</h3>
+						</br>
+					</c:if>
+					<div class="row" style="column-gap: 20px; row-gap: 20px;">
 
-						<input type="hidden" name="id"
-							value="<c:out value='${m.getId()}' />" />
-						<div class="form-group">
-							<%
-							for (String n : niveaux) {
-							%>
-							<input type="radio" name="niveau" value="<%=m.getNiveau()%>"
-								<%if (n.equals(m.getNiveau())) {%> checked <%}%> required>
-							<label style="padding: 0 10px;" for="<%=n%>"> <%=n%>
-							</label>
-							<%
-							}
-							%>
-						</div>
-						<div class="form-group">
-							<input type="text" name="Matiere" id="matiere"
-								value="<%=m.getNom()%>" class="form-control rounded-left"
-								placeholder="Matiére" required>
-						</div>
-						<div class="form-group">
-							<%
-							for (String c : categories) {
-							%>
-							<input type="radio" name="categorie" value="<%=c%>"
-								<%if (c.equals(m.getCategorie())) {%> checked <%}%> required>
-							<label style="padding: 0 10px; font-family:" for="<%=c%>">
-								<%=c%>
-							</label>
-							<%
-							}
-							%>
-						</div>
-						<div class="form-group">
-							<textarea name="description" id="description"
-								class="form-control rounded-left" placeholder="Description"
-								rows="4" required><%=m.getDescription()%></textarea>
+						<%
+						for (Enseignant e : listEnseignants) {
+						%>
+						<div class="col-lg-3 col-md-6 col-sm-6"
+							style="background-color: white; border: solid; box-shadow: 5px 5px 5px 5px;">
+							<div class="single-team mb-30">
+								<div class="team-img" style="background-color: white;">
+									<img src="assets/img/elements/proft.png" alt=""
+										style="width: 140px; height: 140px; display: block; margin-left: auto; margin-right: auto;">
+								</div>
+								<div class="team-caption" style="background-color: white;">
+									<h3>
+										<a href="profile.jsp"><%=e.getNom()%> <%=" "%><%=e.getPrenom()%></a>
+									</h3>
+									<p><%=e.getOrganisme()%></p>
+									<c:if test="${Op == null}">
+										<a href="Enseignant?op=profile&id=<%=e.getId()%>"
+											type="button" class="btn btn-info">Profile</a>
+									</c:if>
+									<c:if test="${Op.equals(\"matiere\") && user.isAdmin() == true}">
+										<a href="Enseignant?op=profile&id=<%=e.getId()%>"
+											type="button" class="btn btn-primary btn-sm"
+											style="font-size: 12px; background: #87CEEB; padding: 20px 20px; border-radius: 4px;">
+											<span> Profile </span>
+										</a>
+										<a
+											href="Matiere?op=Enlever&niveau=<%=niveau%>&matiere=<%=matiere%>&enseignant=<%=e.getId()%>"
+											class="btn btn-primary btn-sm"
+											style="font-size: 12px; background: #c70e0e; padding: 20px 20px; border-radius: 4px;">
+											<span>Enlever</span>
+										</a>
+									</c:if>
+									<c:if test="${Op.equals(\"matiere\") && user.isAdmin() == false}">
+										<a href="meeting"
+											type="button" class="btn btn-primary btn-sm"
+											style="font-size: 12px; background: #87CEEB; padding: 20px 20px; border-radius: 4px;">
+											<span> Meeting </span>
+										</a>
+									</c:if>
+								</div>
+							</div>
 						</div>
 
-						<div class="form-group"
-							style="font-size: 50%; text-align: center;">
-							<button type="submit" value="sinscrire"
-								class="form-control btn btn-primary rounded submit px-3">Modifier</button>
-						</div>
-					</form>
+						<%
+						}
+						%>
+					</div>
 				</div>
 			</div>
-		</div>
+
+		</c:if>
+		<!-- Enseignant Par Matiere  -->
+
+		</br>
+		</br>
+
 
 	</main>
 

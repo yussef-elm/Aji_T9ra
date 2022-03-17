@@ -4,6 +4,7 @@
 
 <%@page import="java.util.*"%>
 <%@page import="com.aji_t9ra.Models.*"%>
+<%@page import="com.aji_t9ra.DAO.*" %>
 <%@ taglib prefix='c' uri='http://java.sun.com/jsp/jstl/core'%>
 
 <%
@@ -169,6 +170,31 @@ session.setAttribute("nosEnseignant", request.getAttribute("nosEnseignant"));
 												</div></li>
 											<li><a href="User?op=ComptesDesactiver">Comptes
 													Desactivés <%="(" + DUsers + ")"%></a></li>
+										</c:if>
+										
+										<c:if test="${user.getRole().equals(\"etudiant\")}">
+                                        <% final EtudiantDAO etuDao = new EtudiantDAO();
+										   Etudiant etu= etuDao.getEtudiantByID(user.getId());
+										   if(!etu.getNiveau_scolaire().equals("Universitaire")){ %>			
+											<li class="navbar-dropdown"><a
+												href="Etudiant?op=MatieresDispo&id<%=user.getId() %>">Matiéres
+													Disponible</a></li>
+											<%}else{ %>		
+											<ul class="navigation navbar-links">
+												<li class="navbar-dropdown"><a > Matiéres
+													Disponible</a>
+													<div class="dropdown">
+														<%
+														for (String c : categories) {
+														%>
+														<a href="Etudiant?op=MatieresDispo&id=<%=user.getId()%>&categorie=<%=c%>"
+															style="padding: 10px 10px;"><%=c%></a>
+														<%
+														}
+														%>
+													</div></li>
+											</ul>
+										<%} %>	
 										</c:if>
 										<c:if test="${user.getRole().equals(\"enseignant\")}">
 											<li class="navbar-dropdown"><a
@@ -354,13 +380,20 @@ session.setAttribute("nosEnseignant", request.getAttribute("nosEnseignant"));
 								if (user.getRole().equals("enseignant")) {
 									boolean MesMatieres = (boolean) request.getAttribute("MesMatieres");
 									if (MesMatieres) {
-								%>
+								%>	
+								<a
+									href="meeting"
+									class="btn btn-primary btn-sm"
+								    style="font-size: 12px; background: #87CEEB; padding: 25px 30px;">
+									<span style="color: white;">Reunion</span>
+								</a>														
 								<a
 									href="Enseignant?op=MatiereUnavailable&idEnseignant=<%=user.getId()%>&idMatiere=<%=m.getId()%>"
 									class="btn btn-primary btn-sm"
-									style="font-size: 12px; background: #c70e0e; padding: 25px 30px; margin: 0% 22%;">
+									style="font-size: 12px; background: #c70e0e; padding: 25px 30px;">
 									<span style="color: white;">Indisponible</span>
 								</a>
+
 								<%
 								} else {
 								%>

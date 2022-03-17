@@ -2,8 +2,7 @@
 	pageEncoding="UTF-8"%>
 
 <%@page import="java.util.*"%>
-<%@page import="com.aji_t9ra.Models.User"%>
-<%@page import="com.aji_t9ra.Models.Enseignant"%>
+<%@page import="com.aji_t9ra.Models.*"%>
 <%@page import="com.aji_t9ra.DAO.*" %>
 <%@ taglib prefix='c' uri='http://java.sun.com/jsp/jstl/core'%>
 
@@ -15,7 +14,11 @@ if (user == null) {
 	return;
 }
 if (user.isAdmin() == false) {
-	response.sendRedirect("index.jsp");
+	session.setAttribute("listEnseignants",  (List<Enseignant>) request.getAttribute("listEnseignants"));
+	session.setAttribute("Op", (String) request.getAttribute("Op"));
+	session.setAttribute("matiere", (String) request.getAttribute("matiere"));
+	session.setAttribute("niveau", (String) request.getAttribute("niveau"));
+	response.sendRedirect("matiereEnseignant.jsp");
 	return;
 }
 %>
@@ -170,6 +173,7 @@ List<Enseignant> listEnseignantPossible = (List<Enseignant>) request.getAttribut
 											<li><a href="User?op=ComptesDesactiver">Comptes
 													Desactivés <%="(" + DUsers + ")"%></a></li>
 										</c:if>
+
 										<c:if test="${user.getRole().equals(\"enseignant\")}">
 											<li class="navbar-dropdown"><a
 												href="Enseignant?op=mesMatieres&id=<%=user.getId()%>">Mes

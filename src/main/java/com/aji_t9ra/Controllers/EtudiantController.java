@@ -18,6 +18,7 @@ import com.aji_t9ra.DAO.MatiereDAO;
 import com.aji_t9ra.DAO.UserDAO;
 import com.aji_t9ra.Models.Enseignant;
 import com.aji_t9ra.Models.Etudiant;
+import com.aji_t9ra.Models.Matiere;
 import com.aji_t9ra.Models.User;
 
 /**
@@ -98,6 +99,30 @@ public class EtudiantController extends HttpServlet {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		 }
+		 if(op.equals("MatieresDispo"))
+		 {
+			 try {
+					request.setCharacterEncoding("UTF-8");
+					int id =Integer.parseInt(request.getParameter("id"));
+					String categorie = request.getParameter("categorie");
+					Etudiant e = etudiantDao.getEtudiantByID(id);
+					List<Matiere> listMatieres=null;
+		            if(categorie ==null) {
+					listMatieres=matiereDao.getMatiereByNiveau(e.getNiveau_scolaire());
+		            }else {
+					listMatieres=matiereDao.getMatiereByNiveauAndCategorie(categorie,e.getNiveau_scolaire());	
+		            }
+		            request.setAttribute("MesMatieres", false);
+					request.setAttribute("listMatieres", listMatieres);
+					request = Counts(request);
+					request.setAttribute("niveau",e.getNiveau_scolaire() );
+					RequestDispatcher dispatcher = request.getRequestDispatcher("Matiere.jsp");
+					dispatcher.forward(request, response);
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 		 }
 		 if(op.equals("Etudiants"))
 		 {

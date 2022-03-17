@@ -165,6 +165,7 @@ List<Etudiant> listEtudiants = (List<Etudiant>) request.getAttribute("listEtudia
 											<li><a href="User?op=ComptesDesactiver">Comptes
 													Desactivés <%="(" + DUsers + ")"%></a></li>
 										</c:if>
+										
 										<c:if test="${user.getRole().equals(\"enseignant\")}">
 											<li class="navbar-dropdown"><a
 												href="Enseignant?op=mesMatieres&id=<%=user.getId()%>">Mes

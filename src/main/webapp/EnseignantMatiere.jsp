@@ -92,6 +92,7 @@ List<Matiere> matieres = (List<Matiere>) session.getAttribute("matieres");
 
 							</ul>
 						</nav>
+
 					</div>
 
 				</div>

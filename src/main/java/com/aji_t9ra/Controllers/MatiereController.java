@@ -64,6 +64,7 @@ public class MatiereController extends HttpServlet {
 		String op = request.getParameter("op");
 		String categorie = request.getParameter("categorie");
 		String etat = request.getParameter("etat");
+		
 
 		if (op != null) {
 			if (op.equals("MatiereUnavailable")) {
@@ -234,10 +235,12 @@ public class MatiereController extends HttpServlet {
 					e.printStackTrace();
 				}
 			} else {
+				
 				try {
 					List<Enseignant> listEnseignants = enseignantDao.getEnseignantsByMatiere(matiere);
 					Matiere m = matiereDao.getMatiereByNom(matiere);
 					List<Enseignant> listEnseignantPossible = enseignantDao.getEnseignantsPossible(niveau, m.getId());
+					
 					request = Counts(request);
 					request.setAttribute("listEnseignants", listEnseignants);
 					request.setAttribute("listEnseignantPossible", listEnseignantPossible);
